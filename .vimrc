@@ -17,7 +17,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes' 
 Plug 'altercation/vim-colors-solarized' 
 Plug 'mattn/emmet-vim',{'for':['html','css','php']}
-Plug 'Valloric/YouCompleteMe',{'for':['c','cpp','py','sh','desktop',]}
+Plug 'Valloric/YouCompleteMe',{'for':['c','cpp','py','php','sh','desktop',]}
 Plug '2072/PHP-Indenting-for-VIm'
 
 Plug 'rayburgemeestre/phpfolding.vim'
@@ -25,7 +25,6 @@ call plug#end()
 "=================    .Vimrc    ================="
 
 set nu
-set ai
 set showcmd
 syntax enable 
 set fdm=manual
@@ -39,7 +38,6 @@ set ts=8
 set sw=4
 autocmd Filetype smarty setlocal ft=html
 autocmd Filetype html setlocal ts=2 sw=2 expandtab
-autocmd Filetype php setlocal ts=2 sw=2 expandtab
 set smartindent
 set pyxversion=3
 
