@@ -8,6 +8,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'vim-scripts/taglist.vim'
 Plug 'tpope/vim-surround',{'for':['html']}
 Plug 'jiangmiao/auto-pairs'
+Plug 'tpope/vim-fugitive'
 
 Plug 'terryma/vim-expand-region' 
 Plug 'terryma/vim-multiple-cursors' 
@@ -34,12 +35,14 @@ set nocompatible
 set completeopt=menu
 colorscheme solarized 
 filetype indent on
-set ts=8
+set ts=4
 set sw=4
 autocmd Filetype smarty setlocal ft=html
 autocmd Filetype html setlocal ts=2 sw=2 expandtab
 set smartindent
 set pyxversion=3
+"==============    windows    =============="
+set noea
 
 "=================    indent    ================="
 let g:html_indent_script1 = "inc"
@@ -51,49 +54,49 @@ nmap <F5> :call Compile()<CR>
 map <C-F5> :call OpenglCompile()<CR>
 
 func! Compile()
-    exec ":w" 
-    if &filetype == 'c' 
-	exec '!gcc % -o %< -lm'
-	exec '!time ./%< < ./input'
-    elseif &filetype == 'cpp'
-	exec '!g++ % -o %<'
-	exec '!./%<'
-    elseif &filetype == 'python'
-	exec '!python3 %'
-    elseif &filetype == 'java'
-	exec '!javac % &&java %<'  
-    elseif &filetype == 'sh'
-	exec '!time bash %'
-    elseif &filetype == 'html'
-	exec  '!google-chrome % &'
-    elseif &filetype == 'php'
-	exec '!cp % /var/www/html'
-	exec '!google-chrome localhost/1.php'
-    endif
+	exec ":w" 
+	if &filetype == 'c' 
+		exec '!gcc % -o run%< -lm'
+		exec '!time ./run%<'
+	elseif &filetype == 'cpp'
+		exec '!g++ % -o %<'
+		exec '!./%<'
+	elseif &filetype == 'python'
+		exec '!python3 %'
+	elseif &filetype == 'java'
+		exec '!javac % &&java %<'  
+	elseif &filetype == 'sh'
+		exec '!time bash %'
+	elseif &filetype == 'html'
+		exec  '!google-chrome % &'
+	elseif &filetype == 'php'
+		let filename=split(expand('%'),"/")
+		exec '!php %;google-chrome localhost/'.filename[len(filename)-1]
+	endif
 endfunc
 func! OpenglCompile()
-    exec "w"
-    exec "!gcc % -o %< -lglfw3 -lGL -lm -ldl  -lXinerama -lXrandr -lXi -lXcursor -lX11 -lXxf86vm -lpthread"
+	exec "w"
+	exec "!gcc % -o %< -lglfw3 -lGL -lm -ldl  -lXinerama -lXrandr -lXi -lXcursor -lX11 -lXxf86vm -lpthread"
 endfunc
 
 map <F6> :call Debugger()<CR>
 func! Debugger()
-    exec "w"
-    if &filetype =='c'
-	exec '!rm -rf %< &&gcc -g % -o %<'
-    elseif &filetype == 'cpp'
-	exec '!rm -rf %< &&g++ -g % -o %<'
-    endif
+	exec "w"
+	if &filetype =='c'
+		exec '!rm -rf GDB_%< &&gcc -g % -o GDB_%<'
+	elseif &filetype == 'cpp'                 
+		exec '!rm -rf GDB_%< &&g++ -g % -o GDB_%<'
+	endif
 endfunc
 
 if &filetype=='html'
-    set tabstop=2
+	set tabstop=2
 elseif &filetype=='css'
-    set tabstop=2
+	set tabstop=2
 elseif &filetype=='c'
-    set cindent
+	set cindent
 elseif &filetype=='cpp'
-    set cindent
+	set cindent
 endif
 "=================Plugin Configure================="
 
@@ -103,8 +106,8 @@ let g:ycm_server_python_interpreter='/usr/bin/python3'
 let g:ycm_python_binary_path = '/usr/bin/python3'
 let g:ycm_global_ycm_extra_conf='~/.vim/plugged/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
 let g:ycm_semantic_triggers = {
-	    \   'css': [ 're!^\s{4}', 're!:\s+' ],
-	    \ }
+			\   'css': [ 're!^\s{4}', 're!:\s+' ],
+			\ }
 
 "===============  airline  ==============="
 
@@ -123,9 +126,9 @@ let g:solarized_underline=1
 let g:solarized_italic=1
 
 if has('gui_running')
-    set background=light
+	set background=light
 else
-    set background=dark
+	set background=dark
 endif
 
 "============== NERDTreeToggle ============="
@@ -154,4 +157,3 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
-"==============    youwish   ============="
