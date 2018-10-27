@@ -10,19 +10,20 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-fugitive'
 Plug 'mg979/vim-visual-multi'
 
-Plug 'vim-syntastic/syntastic'
+Plug 'vim-syntastic/syntastic',{'for':['c','cpp','py','php','sh','desktop','css']}
 Plug 'vim-airline/vim-airline' 
 Plug 'vim-airline/vim-airline-themes' 
 Plug 'altercation/vim-colors-solarized' 
-Plug 'Valloric/YouCompleteMe',{'for':['c','cpp','py','php','sh','desktop','css']}
+Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','py','php','sh','desktop','css']}
 Plug 'mattn/emmet-vim',{'for':['html']}
 Plug '2072/PHP-Indenting-for-VIm'
 
 Plug 'rayburgemeestre/phpfolding.vim'
 
 "Plug 'tpope/vim-surround',{'for':['html']}
-Plug 'terryma/vim-expand-region' 
-Plug 'terryma/vim-multiple-cursors' 
+"Plug 'terryma/vim-expand-region' 
+"Plug 'terryma/vim-multiple-cursors' 
+"Plug 'artur-shaik/vim-javacomplete2'
 call plug#end()
 "=================    .Vimrc    ================="
 
@@ -158,3 +159,6 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+
+"============   eclim   ============"  
+let g:EclimCompletionMethod = 'omnifunc'
