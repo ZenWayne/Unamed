@@ -27,7 +27,7 @@ Plug 'rayburgemeestre/phpfolding.vim'
 call plug#end()
 "=================    .Vimrc    ================="
 
-set relativenumber
+set nu
 set showcmd
 syntax enable 
 set fdm=manual

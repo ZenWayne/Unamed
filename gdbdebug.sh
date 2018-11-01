@@ -1,28 +1,16 @@
 #a bash script used for gdb debug(inside vim)
 #!/bin/bash
-rm -rf GDB_DataStru
-gcc -g DataStru.c -o GDB_DataStru
-breakpoint=(69)
+breakpoint=()
 display=(
-"pi->pow"
-"pj->pow"
-"key->pow"
-"head0->pow"
-"tail0->pow"
-"head1->pow"
-"head1->next->pow"
-"head1->next->next->pow"
-"head1->next->next->next->pow"
-"tail1->pow"
-"tail1->prior->pow"
-"tail1->prior->prior->pow"
-"tail1->prior->prior->prior->pow"
 )
 line=(
-2 1 3 3 4 5 0 0 
-3 3 2 5 3 4 0 0
 )
-afterProI=(n)
+afterProI=(r)
+filename=""
+
+rm -rf "GDB_$filename"
+gcc -g "$filename.c" -o "GDB_$filename"
+
 command="\n"
 for i in ${breakpoint[@]};do
 	command=$command"b $i\n"
@@ -49,5 +37,5 @@ done
 
 #echo "$command"
 #echo -e "$command" > command
-(echo -e "$command" && cat)|gdb GDB_DataStru
+(echo -e "$command" && cat)|gdb "GDB_$filename"
 rm -f input
