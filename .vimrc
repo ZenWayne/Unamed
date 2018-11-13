@@ -14,11 +14,14 @@ Plug 'vim-syntastic/syntastic',{'for':['c','cpp','py','php','sh','desktop','css'
 Plug 'vim-airline/vim-airline' 
 Plug 'vim-airline/vim-airline-themes' 
 Plug 'altercation/vim-colors-solarized' 
-Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','py','php','sh','desktop','css']}
+Plug 'Valloric/YouCompleteMe'
+"Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','py','php','sh','desktop','css']}
 Plug 'mattn/emmet-vim',{'for':['html']}
 Plug '2072/PHP-Indenting-for-VIm'
 
 Plug 'rayburgemeestre/phpfolding.vim'
+Plug 'artur-shaik/vim-javacomplete2'
+Plug '~/.vim/plugged/eclim'
 
 "Plug 'tpope/vim-surround',{'for':['html']}
 "Plug 'terryma/vim-expand-region' 
@@ -42,7 +45,6 @@ set sw=4
 autocmd Filetype smarty setlocal ft=html
 autocmd Filetype html setlocal ts=2 sw=2 expandtab
 set smartindent
-set pyxversion=3
 "==============    windows    =============="
 set noea
 
@@ -104,8 +106,8 @@ endif
 
 "=================   YCM   ================="
 
-let g:ycm_server_python_interpreter='/usr/bin/python3'
-let g:ycm_python_binary_path = '/usr/bin/python3'
+let g:ycm_server_python_interpreter='/usr/bin/python3.6'
+let g:ycm_python_binary_path = '/usr/bin/python3.6'
 let g:ycm_global_ycm_extra_conf='~/.vim/plugged/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
 let g:ycm_semantic_triggers = {
 	    \   'css': [ 're!^\s{4}', 're!:\s+' ],
@@ -161,4 +163,16 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 
 "============   eclim   ============"  
+
 let g:EclimCompletionMethod = 'omnifunc'
+
+"=========== javacomplete2 ========="
+
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
+
+"=========== multi-visual ========="
+
+let g:VM_maps = {}
+let g:VM_maps["Add Cursor Down"]             = '<M-j>'
+let g:VM_maps["Add Cursor Up"]               = '<M-k>'
+
