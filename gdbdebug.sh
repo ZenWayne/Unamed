@@ -1,15 +1,16 @@
 #a bash script used for gdb debug(inside vim)
 #!/bin/bash
-breakpoint=()
+filename="oj1164"
+run=0
+breakpoint=(52)
 display=(
 )
 line=(
 )
-afterProI=(r)
-filename=""
+afterProI=(
+"set pagination off"
+)
 
-rm -rf "GDB_$filename"
-gcc -g "$filename.c" -o "GDB_$filename"
 
 command="\n"
 for i in ${breakpoint[@]};do
@@ -23,19 +24,29 @@ while [ $i -lt ${#line[@]} ];do
 	((i++))
 done
 echo -e $programinput > input
-command=$command"run < input\n"
+command=$command"run < input\n\n"
 
-j=0
-while [ $j -lt ${#display[@]} ];do
-	command=$command"display ${display[$j]}\n"
-	((j++))
+i=0
+while [ $i -lt ${#display[@]} ];do
+	command=$command"display ${display[$i]}\n"
+	((i++))
 done
 
-for i in ${afterProI[@]};do
-	command=$command"$afterProI\n"
+i=0
+while [ $i -lt ${#afterProI[@]} ];do
+	command=$command"${afterProI[$i]}\n"
+	((i++))
 done
 
-#echo "$command"
-#echo -e "$command" > command
-(echo -e "$command" && cat)|gdb "GDB_$filename"
-rm -f input
+if [ $run -eq 1 ]; then
+    rm -f "./run_$filename"
+    gcc "$filename.c" -o "run_$filename"
+    "./run_$filename" < input
+    #rm -f input "./run_$filename"
+else
+    echo "$command"
+    rm -rf "GDB_$filename"
+    gcc -g "$filename.c" -o "GDB_$filename"
+    (echo -e "$command" && cat)|gdb "GDB_$filename"
+    rm -rf "GDB_$filename"
+fi

@@ -6,21 +6,23 @@ Plug 'mileszs/ack.vim'
 Plug 'yianwillis/vimcdoc'
 Plug 'scrooloose/nerdtree' 
 Plug 'vim-scripts/taglist.vim'
+"Plug 'mg979/alt-mappings.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-fugitive'
 Plug 'mg979/vim-visual-multi'
 
-Plug 'vim-syntastic/syntastic',{'for':['c','cpp','py','php','sh','desktop','css']}
+Plug 'vim-syntastic/syntastic',{'for':['py','php','sh','desktop','css']}
 Plug 'vim-airline/vim-airline' 
 Plug 'vim-airline/vim-airline-themes' 
 Plug 'altercation/vim-colors-solarized' 
-Plug 'Valloric/YouCompleteMe'
-"Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','py','php','sh','desktop','css']}
+"Plug 'Valloric/YouCompleteMe'
+Plug 'davidhalter/jedi-vim',{'for':['python']}
+Plug 'Valloric/YouCompleteMe',{'for':['c','cpp','php','sh','desktop','css']}
 Plug 'mattn/emmet-vim',{'for':['html']}
 Plug '2072/PHP-Indenting-for-VIm'
 
 Plug 'rayburgemeestre/phpfolding.vim'
-Plug 'artur-shaik/vim-javacomplete2'
+Plug 'artur-shaik/vim-javacomplete2',{'for':['java']}
 Plug '~/.vim/plugged/eclim'
 
 "Plug 'tpope/vim-surround',{'for':['html']}
@@ -44,6 +46,8 @@ set ts=8
 set sw=4
 autocmd Filetype smarty setlocal ft=html
 autocmd Filetype html setlocal ts=2 sw=2 expandtab
+autocmd FileType text setlocal textwidth=78
+
 set smartindent
 "==============    windows    =============="
 set noea
@@ -60,11 +64,11 @@ map <C-F5> :call OpenglCompile()<CR>
 func! Compile()
     exec ":w" 
     if &filetype == 'c' 
-	exec '!gcc % -o run%< -lm'
-	exec '!time ./run%<'
+	exec '!gcc % -o run_%< -lm'
+	exec '!time ./run_%<'
     elseif &filetype == 'cpp'
-	exec '!g++ % -o %<'
-	exec '!./%<'
+	exec '!g++ % -o run_%<'
+	exec '!time ./run_%<'
     elseif &filetype == 'python'
 	exec '!python3 %'
     elseif &filetype == 'java'
@@ -93,15 +97,6 @@ func! Debugger()
     endif
 endfunc
 
-if &filetype=='html'
-    set tabstop=2
-elseif &filetype=='css'
-    set tabstop=2
-elseif &filetype=='c'
-    set cindent
-elseif &filetype=='cpp'
-    set cindent
-endif
 "=================Plugin Configure================="
 
 "=================   YCM   ================="
@@ -169,10 +164,12 @@ let g:EclimCompletionMethod = 'omnifunc'
 "=========== javacomplete2 ========="
 
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
+let g:JavaComplete_EnableDefaultMappings = 0
 
 "=========== multi-visual ========="
-
+set <M-j>=j
+set <M-k>=k
+set timeout timeoutlen=250 ttimeoutlen=25
 let g:VM_maps = {}
 let g:VM_maps["Add Cursor Down"]             = '<M-j>'
 let g:VM_maps["Add Cursor Up"]               = '<M-k>'
-
