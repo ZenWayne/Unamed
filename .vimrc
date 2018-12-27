@@ -6,25 +6,25 @@ Plug 'mileszs/ack.vim'
 Plug 'yianwillis/vimcdoc'
 Plug 'scrooloose/nerdtree' 
 Plug 'vim-scripts/taglist.vim'
-"Plug 'mg979/alt-mappings.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-fugitive'
 Plug 'mg979/vim-visual-multi'
 
-Plug 'vim-syntastic/syntastic',{'for':['py','php','sh','desktop','css']}
+Plug 'vim-syntastic/syntastic',{'for':['c','py','php','sh','desktop','css']}
 Plug 'vim-airline/vim-airline' 
 Plug 'vim-airline/vim-airline-themes' 
 Plug 'altercation/vim-colors-solarized' 
 "Plug 'Valloric/YouCompleteMe'
 Plug 'davidhalter/jedi-vim',{'for':['python']}
-Plug 'Valloric/YouCompleteMe',{'for':['c','cpp','php','sh','desktop','css']}
-Plug 'mattn/emmet-vim',{'for':['html']}
+Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','php','sh','desktop','css']}
+Plug 'mattn/emmet-vim',{'for':['html','php']}
 Plug '2072/PHP-Indenting-for-VIm'
 
 Plug 'rayburgemeestre/phpfolding.vim'
-Plug 'artur-shaik/vim-javacomplete2',{'for':['java']}
-Plug '~/.vim/plugged/eclim'
+"Plug 'artur-shaik/vim-javacomplete2',{'for':['java']}
+Plug '~/.vim/plugged/eclim',{'for':['java']}
 
+"Plug 'mg979/alt-mappings.vim'
 "Plug 'tpope/vim-surround',{'for':['html']}
 "Plug 'terryma/vim-expand-region' 
 "Plug 'terryma/vim-multiple-cursors' 
@@ -56,6 +56,7 @@ set noea
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc" 
 let g:html_indent_inctags = "html,address,article,aside,audio,blockquote,canvas,dd,div,dl,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,hr,main,nav,noscript,ol,output,p,pre,section,table,tfoot,ul,video"
+let php_htmlInStrings = 1
 "=================    .Vimrc    ================="
 
 nmap <F5> :call Compile()<CR>
@@ -79,7 +80,7 @@ func! Compile()
 	exec  '!google-chrome % &'
     elseif &filetype == 'php'
 	let filename=split(expand('%'),"/")
-	exec '!php %;google-chrome localhost/'.filename[len(filename)-1]
+	exec '!php %;firefox localhost/'.filename[len(filename)-1]
     endif
 endfunc
 func! OpenglCompile()
@@ -164,7 +165,7 @@ let g:EclimCompletionMethod = 'omnifunc'
 "=========== javacomplete2 ========="
 
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
-let g:JavaComplete_EnableDefaultMappings = 0
+let g:JavaComplete_EnableDefaultMappings = 1
 
 "=========== multi-visual ========="
 set <M-j>=j
