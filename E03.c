@@ -223,71 +223,182 @@ list *halfList(list *head,list *tail)
 
 }
 
-void oplist(list *l)
+void oplist(list *l,list *tail)
 {
     list *tmp=l;
-    while(tmp->next){
+    while(tmp->next!=tail){
 	printf("%d ",tmp->weight);
 	tmp=tmp->next;
-
     }
     puts("");
 
 }
-void sort(list *head, list *tail)
+
+void qSort(list *head, list *tail)
 {
-    if(head==tail)return;
+    if(head->next==tail)return;
 
     list *i=head, *j=halfList(head,tail);
     list *tmp=0;
     list *key=j;
+    static list *head0=0;
 
-    while(i!=key||j!=tail){
-	while(j->weight>=key->weight&&j!=tail){
+    if(head0==0)head0=head;
+
+    while(i->next!=key||j->next!=tail){
+	while(j->next!=tail&&j->next->weight>=key->weight){
 	    j=j->next;
-
 	}
-	tmp=j->next;
-	*i=*j;
-	i->next=tmp;
-	while(i->weight<=key->weight&&i!=key){
+	if(j->next!=tail){
+	    tmp=j->next;
+	    j->next=j->next->next;
+	    tmp->next=i->next;
+	    i->next=tmp;
 	    i=i->next;
-
 	}
-	tmp=j->next;
-	*j=*i;
-	j->next=tmp;
-	oplist(head);
-
+	while(i->next!=key&&i->next->weight<=key->weight){
+	    i=i->next;
+	}
+	if(i->next!=key){
+	    tmp=i->next;
+	    i->next=i->next->next;
+	    tmp->next=j->next;
+	    j->next=tmp;
+	    j=j->next;
+	}
     }
 
-    tmp=i->next;
-    *i=*key;
-    i->next=tmp;
+    qSort(head,key);
+    qSort(key,tail);
+    printf("%d :",key->weight);
+    oplist(head0,key->next);
+    printf("%d :",key->weight);
+    oplist(key,tail->next);
+}
 
-    //sort(head,halfList(head,half));
-    //    //sort(half,halfList(half,NULL));
-    //
+list *initListarr(int *a,int num){
+    list *p=(list *)malloc(sizeof(list));
+
+    list *head=p;
+    for(int i=0;i<num;i++)
+    {
+	p=p->next=(list *)malloc(sizeof(list));
+	p->weight=a[i];
+    }
+    free(p->next);
+    p->next=0;
+    p=head->next;
+    free(head);
+    oplist(p,0);
+    return p;
+}
+list *combine(list *a,list *b)
+{
+    list *c=(list *)malloc(sizeof(list));
+
+    list *head=c;
+    if(a)
+    {
+	while(a)
+	{
+	    *c=*a;
+	    if(a->next)c->next=(list *)malloc(sizeof(list));
+	    else c->next=0;
+	    a=a->next;
+	    c=c->next;
+	}
+    }
+    while(b)
+    {
+	*c=*b;
+	if(b->next)c->next=(list *)malloc(sizeof(list));
+	else c->next=0;	
+	b=b->next;
+	c=c->next;
+    }
+    return head;
+}
+void destory(list *a)
+{
+    list *tmp;
+    while(a){
+	tmp=a;
+	a=a->next;
+	free(tmp);
+    }
+}
+
+graphList *prime(graphList *GL,int index)
+{
+    graphList *GL0=(graphList *)malloc(sizeof(graphList));
+    list * Seqlist[GL->numOfVerts];
+
+    for(int i=0;i<GL->numOfVerts;i++)
+    {
+	GL0->verticesList[i]=combine(0,GL->verticesList[i]);
+	qSort(GL0->verticesList[i],0);
+	GL0->verticesList[i]->visited=0;
+	Seqlist[i]=GL0->verticesList[i]->next;
+    }
+
+    GL0->verticesList[index]->visited=1;
+    qSort(GL0->verticesList[index],0);
+    for(int i=index,j=0; i< GL->numOfVerts+1 ; i++)
+    {
+	if(i >= GL->numOfVerts ) {
+	    Seqlist[index]=Seqlist[index]->next;
+	    j=Seqlist[index]->node;
+	    if(GL0->verticesList[j]->visited==0)
+	    {
+		GL0->verticesList[j]->visited=1;
+		qSort(GL0->verticesList[j],0);
+	    }
+	    if((++j)>=GL->numOfVerts-1)
+		break;
+	    else i=-1;
+	}
+	if(GL0->verticesList[i]->visited==0)continue;
+	else {
+	    index=Seqlist[i]->weight<Seqlist[index]->weight?i:index;
+	}
+	/*
+	Seqlist[i]=Sdfdfqlist[i]->next;
+	qSort(Seqlist[i],0);
+	i=Seqlist[i]->next->node;
+	Seqlist[i]->visited=1;
+	*/
+    }
+
+    return GL0;
 }
 
 int main()
 {
-    graphMatrix * GM=initgraphMatrix( 'A' , 10  );
     graphList *GL=initgraphList( 'A' , 10  );
+    /*graphMatrix * GM=initgraphMatrix( 'A' , 10  );
 
-    outputGM(GM);
+      outputGM(GM);
+      outputGL(GL);
+
+      printf("dfs : %c ", GL->verticesList[0]->node);
+      GLdfs(GL, GL->verticesList[0]);
+      puts("");
+
+      GLbfs(GL);
+
     outputGL(GL);
-
-    printf("dfs : %c ", GL->verticesList[0]->node);
-    GLdfs(GL, GL->verticesList[0]);
-    puts("");
-
-    GLbfs(GL);
-
-    list *h=GL->verticesList[0]->next;
-    sort(h,halfList(h,NULL));
-
+    list *a=GL->verticesList[0]->next;
+    list *b=GL->verticesList[1]->next;
+    GL->verticesList[0]->next=combine(a,b);
+    outputGL(GL);
+    GL->verticesList[0]->next=a;
+    outputGL(GL);
+*/
+//    outputGL(prime(GL,0));
+    int arr[8]={0,30,39,23,17,43,28,34};
+    puts(".......");
+    qSort(initListarr(arr,8),0);
+    puts("############");
     return 0;
-
 }
 
