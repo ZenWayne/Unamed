@@ -14,9 +14,9 @@ Plug 'vim-syntastic/syntastic',{'for':['c','py','php','sh','desktop','css']}
 Plug 'vim-airline/vim-airline' 
 Plug 'vim-airline/vim-airline-themes' 
 Plug 'altercation/vim-colors-solarized' 
-"Plug 'Valloric/YouCompleteMe'
+Plug 'Valloric/YouCompleteMe'
 Plug 'davidhalter/jedi-vim',{'for':['python']}
-Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','php','sh','desktop','css']}
+"Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','php','sh','desktop','css']}
 Plug 'mattn/emmet-vim',{'for':['html','php']}
 Plug '2072/PHP-Indenting-for-VIm'
 
@@ -44,6 +44,8 @@ colorscheme solarized
 filetype indent on
 set ts=8
 set sw=4
+set encoding=utf-8 
+set fileencodings=ucs-bom,utf-8,cp936
 autocmd Filetype smarty setlocal ft=html
 autocmd Filetype html setlocal ts=2 sw=2 expandtab
 autocmd FileType text setlocal textwidth=78
@@ -59,8 +61,9 @@ let g:html_indent_inctags = "html,address,article,aside,audio,blockquote,canvas,
 let php_htmlInStrings = 1
 "=================    .Vimrc    ================="
 
+nmap Y y$
 nmap <F5> :call Compile()<CR>
-map <C-F5> :call OpenglCompile()<CR>
+nmap <C-F5> :call OpenglCompile()<CR>
 
 func! Compile()
     exec ":w" 
@@ -161,11 +164,12 @@ let g:syntastic_check_on_wq = 0
 "============   eclim   ============"  
 
 let g:EclimCompletionMethod = 'omnifunc'
+command PD execute ":ProjectDelete "
 
 "=========== javacomplete2 ========="
 
-autocmd FileType java setlocal omnifunc=javacomplete#Complete
-let g:JavaComplete_EnableDefaultMappings = 1
+"autocmd FileType java setlocal omnifunc=javacomplete#Complete
+"let g:JavaComplete_EnableDefaultMappings = 1
 
 "=========== multi-visual ========="
 set <M-j>=j
