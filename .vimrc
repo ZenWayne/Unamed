@@ -10,28 +10,25 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-fugitive'
 Plug 'mg979/vim-visual-multi'
 
-Plug 'vim-syntastic/syntastic',{'for':['c','py','php','sh','desktop','css']}
+Plug 'vim-syntastic/syntastic',{'for':['c','cpp','py','php','sh','desktop','css']}
 Plug 'vim-airline/vim-airline' 
 Plug 'vim-airline/vim-airline-themes' 
 Plug 'altercation/vim-colors-solarized' 
 Plug 'Valloric/YouCompleteMe'
-Plug 'davidhalter/jedi-vim',{'for':['python']}
-"Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','php','sh','desktop','css']}
-Plug 'mattn/emmet-vim',{'for':['html','php']}
+"Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','py','php','sh','desktop','css']}
+Plug 'mattn/emmet-vim',{'for':['html']}
 Plug '2072/PHP-Indenting-for-VIm'
 
 Plug 'rayburgemeestre/phpfolding.vim'
-"Plug 'artur-shaik/vim-javacomplete2',{'for':['java']}
-Plug '~/.vim/plugged/eclim',{'for':['java']}
+Plug 'artur-shaik/vim-javacomplete2'
+Plug '~/.vim/plugged/eclim'
 
-"Plug 'mg979/alt-mappings.vim'
 "Plug 'tpope/vim-surround',{'for':['html']}
 "Plug 'terryma/vim-expand-region' 
 "Plug 'terryma/vim-multiple-cursors' 
 "Plug 'artur-shaik/vim-javacomplete2'
 call plug#end()
-"=================    .Vimrc    ================="
-
+"=================    .Vimrc    =================" 
 set nu
 set showcmd
 syntax enable 
@@ -44,12 +41,8 @@ colorscheme solarized
 filetype indent on
 set ts=8
 set sw=4
-set encoding=utf-8 
-set fileencodings=ucs-bom,utf-8,cp936
 autocmd Filetype smarty setlocal ft=html
 autocmd Filetype html setlocal ts=2 sw=2 expandtab
-autocmd FileType text setlocal textwidth=78
-
 set smartindent
 "==============    windows    =============="
 set noea
@@ -58,21 +51,19 @@ set noea
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc" 
 let g:html_indent_inctags = "html,address,article,aside,audio,blockquote,canvas,dd,div,dl,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,hr,main,nav,noscript,ol,output,p,pre,section,table,tfoot,ul,video"
-let php_htmlInStrings = 1
 "=================    .Vimrc    ================="
 
-nmap Y y$
 nmap <F5> :call Compile()<CR>
-nmap <C-F5> :call OpenglCompile()<CR>
+map <C-F5> :call OpenglCompile()<CR>
 
 func! Compile()
     exec ":w" 
     if &filetype == 'c' 
-	exec '!gcc % -o run_%< -lm'
-	exec '!time ./run_%<'
+	exec '!gcc % -o run%< -lm'
+	exec '!time ./run%<'
     elseif &filetype == 'cpp'
-	exec '!g++ % -o run_%<'
-	exec '!time ./run_%<'
+	exec '!g++ % -o %<'
+	exec '!./%<'
     elseif &filetype == 'python'
 	exec '!python3 %'
     elseif &filetype == 'java'
@@ -82,8 +73,7 @@ func! Compile()
     elseif &filetype == 'html'
 	exec  '!google-chrome % &'
     elseif &filetype == 'php'
-	let filename=split(expand('%'),"/")
-	exec '!php %;firefox localhost/'.filename[len(filename)-1]
+	exec '!php %'
     endif
 endfunc
 func! OpenglCompile()
@@ -101,6 +91,15 @@ func! Debugger()
     endif
 endfunc
 
+if &filetype=='html'
+    set tabstop=2
+elseif &filetype=='css'
+    set tabstop=2
+elseif &filetype=='c'
+    set cindent
+elseif &filetype=='cpp'
+    set cindent
+endif
 "=================Plugin Configure================="
 
 "=================   YCM   ================="
@@ -109,12 +108,18 @@ let g:ycm_server_python_interpreter='/usr/bin/python3.6'
 let g:ycm_python_binary_path = '/usr/bin/python3.6'
 let g:ycm_global_ycm_extra_conf='~/.vim/plugged/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
 let g:ycm_semantic_triggers = {
-	    \   'css': [ 're!^\s{4}', 're!:\s+' ],
+	    \   'css' : [ 're!^\s{4}', 're!:\s+' ],
+            \   'php' : [ '->', '::','re!\s*[_a-z]{3}'  ],
 	    \ }
 
 "===============  airline  ==============="
 
+if !exists('g:airline_symbols')
+let g:airline_symbols = {}
+endif
 let g:airline_powerline_fonts = 1
+let g:airline_symbols.whitespace = 'Ξ'
+let g:airline_symbols.linenr = '¶'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#bufferline#enabled = 1
 let g:airline#extensions#ycm#enabled = 1
@@ -164,17 +169,14 @@ let g:syntastic_check_on_wq = 0
 "============   eclim   ============"  
 
 let g:EclimCompletionMethod = 'omnifunc'
-command PD execute ":ProjectDelete "
 
 "=========== javacomplete2 ========="
 
 "autocmd FileType java setlocal omnifunc=javacomplete#Complete
-"let g:JavaComplete_EnableDefaultMappings = 1
 
 "=========== multi-visual ========="
-set <M-j>=j
-set <M-k>=k
-set timeout timeoutlen=250 ttimeoutlen=25
+
 let g:VM_maps = {}
 let g:VM_maps["Add Cursor Down"]             = '<M-j>'
 let g:VM_maps["Add Cursor Up"]               = '<M-k>'
+
