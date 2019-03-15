@@ -18,7 +18,6 @@ afterProI=(
 )
 
 afterProI=(r)
-filename="E03"
 
 rm -rf "GDB_$filename"
 g++ -g "$filename.cpp" -o "GDB_$filename"
