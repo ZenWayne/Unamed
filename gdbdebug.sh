@@ -1,12 +1,8 @@
 #a bash script used for gdb debug(inside vim)
 #!/bin/bash
-<<<<<<< HEAD
 filename="oj1164"
 run=0
 breakpoint=(52)
-=======
-breakpoint=(396)
->>>>>>> 90b4253c34c8995ea3dc1b0c97e38f909b433c33
 display=(
 "i"
 "j"
@@ -41,18 +37,16 @@ display=(
 )                              
 line=(
 )
-<<<<<<< HEAD
+
 afterProI=(
 "set pagination off"
 )
 
-=======
 afterProI=(r)
 filename="E03"
 
 rm -rf "GDB_$filename"
 g++ -g "$filename.cpp" -o "GDB_$filename"
->>>>>>> 90b4253c34c8995ea3dc1b0c97e38f909b433c33
 
 command="\n"
 for i in ${breakpoint[@]};do
