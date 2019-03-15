@@ -1,5 +1,4 @@
-"curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-"   https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
 "=================    Plugin    ================="
 
 call plug#begin('~/.vim/plugged')
@@ -7,7 +6,6 @@ Plug 'junegunn/vim-plug'
 Plug 'mileszs/ack.vim'
 Plug 'yianwillis/vimcdoc'
 Plug 'scrooloose/nerdtree' 
-Plug 'vim-scripts/taglist.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-fugitive'
 Plug 'mg979/vim-visual-multi'
@@ -22,8 +20,8 @@ Plug 'mattn/emmet-vim',{'for':['html']}
 Plug '2072/PHP-Indenting-for-VIm'
 
 Plug 'rayburgemeestre/phpfolding.vim'
-Plug 'artur-shaik/vim-javacomplete2'
-Plug '~/.vim/plugged/eclim'
+"Plug 'artur-shaik/vim-javacomplete2'
+Plug '~/.vim/plugged/eclim',{'for': ['java']}
 
 "Plug 'tpope/vim-surround',{'for':['html']}
 "Plug 'terryma/vim-expand-region' 
@@ -46,6 +44,9 @@ set sw=4
 autocmd Filetype smarty setlocal ft=html
 autocmd Filetype html setlocal ts=2 sw=2 expandtab
 set smartindent
+set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+set termencoding=utf-8
+set encoding=utf-8
 "==============    windows    =============="
 set noea
 
@@ -106,11 +107,12 @@ endif
 
 "=================   YCM   ================="
 
-let g:ycm_server_python_interpreter='/usr/bin/python3.6'
-let g:ycm_python_binary_path = '/usr/bin/python3.6'
+let g:ycm_server_python_interpreter='/usr/bin/python3.7'
+let g:ycm_python_binary_path = '/usr/bin/python3.7'
 let g:ycm_global_ycm_extra_conf='~/.vim/plugged/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
 let g:ycm_semantic_triggers = {
 	    \   'css' : [ 're!^\s{4}', 're!:\s+' ],
+            \   'c' : [ '->', '::','re!\s*[_a-z]{3}'  ],
             \   'php' : [ '->', '::','re!\s*[_a-z]{3}'  ],
 	    \ }
 
@@ -119,7 +121,7 @@ let g:ycm_semantic_triggers = {
 if !exists('g:airline_symbols')
 let g:airline_symbols = {}
 endif
-let g:airline_powerline_fonts = 1
+let g:airline_powerline_fonts = 0
 let g:airline_symbols.whitespace = 'Ξ'
 let g:airline_symbols.linenr = '¶'
 let g:airline#extensions#tabline#enabled = 1
@@ -144,7 +146,7 @@ endif
 "============== NERDTreeToggle ============="
 
 map <F2> :NERDTreeToggle <CR>
-set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
+"set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
 set laststatus=2
 set t_Co=256
 
