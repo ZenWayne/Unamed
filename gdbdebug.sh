@@ -3,39 +3,14 @@
 filename="oj1164"
 run=0
 breakpoint=(52)
+#variables need to watch
 display=(
-"i"
-"j"
-"visitedNum[i]"
-"visitedNum[i]"
-"visitedNumIndex"
-"visitedNum[0]"
-"visitedNum[1]"
-"visitedNum[2]"
-"Seqlist[i]->weight"
-"Seqlist[index]->weight"
-"Seqlist[0]->weight"
-"Seqlist[1]->weight"
-"Seqlist[2]->weight"
-"Seqlist[3]->weight"
-"Seqlist[4]->weight"
-"index"
-#"i->weight"
-#"j->weight"
-#"head->weight"
-#"key->weight"
-#"p->next->weight"
-#"p->next->next->weight"
-#"p->next->next->next->weight"
-#"p->next->next->next->next->weight"
-#"p->next->next->next->next->next->weight"
-#"p->next->next->next->next->next->next->weight"
-#"p->next->next->next->next->next->next->next->weight"
-#"p->next->next->next->next->next>next->next->next->weight"
-#"p->next->next->next->next->next->next>next>next->next->next->weight"
-#"p->next->next->next->next->next->next>next>next->next->next->next->weight"
+"vara"
+"varb"
 )                              
+# program input 
 line=(
+"programinput"
 )
 
 afterProI=(
