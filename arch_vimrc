@@ -1,0 +1,297 @@
+
+"=================    Plugin    ================="
+
+call plug#begin('~/.vim/plugged')
+Plug 'junegunn/vim-plug'
+Plug 'mileszs/ack.vim'
+Plug 'yianwillis/vimcdoc'
+Plug 'scrooloose/nerdtree' 
+Plug 'jiangmiao/auto-pairs'
+Plug 'tpope/vim-fugitive'
+Plug 'mg979/vim-visual-multi'
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
+Plug 'shime/vim-livedown'
+Plug 'ryanoasis/vim-devicons'
+
+Plug 'vim-syntastic/syntastic',{'for':['c','java','cpp','php','sh','desktop','css']}
+Plug 'vim-airline/vim-airline' 
+Plug 'vim-airline/vim-airline-themes' 
+Plug 'altercation/vim-colors-solarized' 
+
+Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
+"Plug 'Valloric/YouCompleteMe',{'for':'java','do': './install.py --clang-completer --system-libclang --java-completer'}
+"Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','python','php','sh','desktop','css'],'dir': '~/.vim/plugged/YouCompleteMe', 'do': './install.py --clang-completer --system-libclang --java-completer'}
+Plug 'mattn/emmet-vim',{'for':['html','xml']}
+Plug '2072/PHP-Indenting-for-VIm'
+
+Plug 'rayburgemeestre/phpfolding.vim'
+"Plug 'artur-shaik/vim-javacomplete2'
+Plug '~/.vim/plugged/eclim',{'for': ['java']}
+Plug 'aikawa9376/vim-sql-workbench',{'for': ['sql']}
+Plug 'hoffstein/vim-tsql',{'for': ['sql']}
+
+"Plug 'tpope/vim-surround',{'for':['html']}
+"Plug 'terryma/vim-expand-region' 
+"Plug 'terryma/vim-multiple-cursors' 
+"Plug 'artur-shaik/vim-javacomplete2'
+call plug#end()
+"=================    .Vimrc    =================" 
+set nu
+set showcmd
+syntax enable 
+set fdm=manual
+set helplang=cn
+set history=1000
+set nocompatible
+set completeopt=menu
+set cmdheight=2
+colorscheme solarized 
+filetype indent on
+set ts=8
+set sw=4
+autocmd Filetype smarty setlocal ft=html
+autocmd Filetype html setlocal ts=2 sw=2 expandtab
+autocmd Filetype markdown setlocal sw=3 expandtab
+set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+set termencoding=utf-8
+set encoding=utf-8
+autocmd BufNewFile,BufRead *.cpp set formatprg=astyle\ -T4pb
+autocmd BufNewFile,BufRead *.c set formatprg=astyle\ -s4p
+autocmd BufNewFile,BufRead *.java set formatprg=astyle\ -pA2
+autocmd BufNewFile,BufRead *.py set formatprg=astyle\ -pA12
+"==============    windows    =============="
+"set noea
+
+"=================    html    ================="
+let g:html_indent_script1 = "inc"
+let g:html_indent_style1 = "inc" 
+let g:html_indent_inctags = "html,address,article,aside,audio,blockquote,canvas,dd,div,dl,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,hr,main,nav,noscript,ol,output,p,pre,section,table,tfoot,ul,video"
+"=================    .Vimrc    ================="
+
+nmap <M-r> :call Compile()<CR>
+map <C-F5> :call OpenglCompile()<CR>
+
+func! Compile()
+    exec ":w" 
+    if &filetype == 'c' 
+	exec '!gcc % -o run_%< -lm'
+    elseif &filetype == 'cpp'
+	exec '!g++ % -o run_%<'
+    elseif &filetype == 'python'
+	exec '!python3 %'
+    elseif &filetype == 'java'
+	exec '!javac % &&java %<'  
+    elseif &filetype == 'sh'
+	exec '!time bash %'
+    elseif &filetype == 'html'
+	exec  '!google-chrome % &'
+    elseif &filetype == 'php'
+	exec '!php %'
+    endif
+endfunc
+func! OpenglCompile()
+    exec "w"
+    exec "!gcc % -o %< -lglfw3 -lGL -lm -ldl  -lXinerama -lXrandr -lXi -lXcursor -lX11 -lXxf86vm -lpthread"
+endfunc
+
+map <F6> :call Debugger()<CR>
+func! Debugger()
+    exec "w"
+    if &filetype =='c'
+	exec '!rm -rf GDB_%< &&gcc -g % -o GDB_%<'
+    elseif &filetype == 'cpp'                 
+	exec '!rm -rf GDB_%< &&g++ -g % -o GDB_%<'
+    endif
+endfunc
+
+if &filetype=='html'
+    set tabstop=2
+elseif &filetype=='css'
+    set tabstop=2
+elseif &filetype=='c'
+    set cindent
+elseif &filetype=='cpp'
+    set cindent
+endif
+"=================Plugin Configure================="
+
+"=================   YCM   ================="
+
+let g:ycm_server_python_interpreter='/usr/bin/python3.7'
+let g:ycm_python_binary_path = '/usr/bin/python3.7'
+let g:ycm_global_ycm_extra_conf='~/.vim/plugged/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
+"let g:ycm_semantic_triggers =  {
+  "\   'c': ['->', '.'],
+  "\   'objc': ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+  "\            're!\[.*\]\s'],
+  "\   'ocaml': ['.', '#'],
+  "\   'cpp,cuda,objcpp': ['->', '.', '::'],
+  "\   'perl': ['->'],
+  "\   'php': ['->', '::'],
+  "\   'cs,d,elixir,go,groovy,java,javascript,julia,perl6,python,scala,typescript,vb': ['.'],
+  "\   'ruby,rust': ['.', '::'],
+  "\   'lua': ['.', ':'],
+  "\   'erlang': [':'],
+  "\   'java' : [ '.', 're!\s{3}'  ],
+  "\ }
+let g:ycm_semantic_triggers = {
+	    \   'css' : [ 're!^\s{4}', 're!:\s+' ],
+            \   'c' : [ '->', '.','re![#_a-zA-Z]+\w*'  ],
+            \   'python' : [ '.','re![_a-zA-Z]+\w*\s'  ],
+            \   'php' : [ '->', '::','re!\s*[_a-z]{3}'  ],
+            \   'java' : [ '.', 're!\s{3}'  ],
+	    \ }
+
+"nnoremap <C-c>gt :YcmCompleter GoTo<CR>
+"nnoremap <C-c>gd :YcmCompleter GoToDeclaration<CR>
+"nnoremap <C-c>t :YcmCompleter GetType<CR>
+"nnoremap <C-c>d :YcmCompleter GetDoc<CR>
+"nnoremap <C-c>fi :YcmCompleter FixIt<CR>
+"nnoremap <C-c>im :YcmCompleter OrganizeImports<CR>
+"nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
+
+"===============  airline  ==============="
+
+if !exists('g:airline_symbols')
+let g:airline_symbols = {}
+endif
+let g:airline_powerline_fonts = 1
+let g:airline_symbols.whitespace = 'Ξ'
+let g:airline_symbols.linenr = '¶'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#bufferline#enabled = 1
+let g:airline#extensions#ycm#enabled = 1
+let g:airline#extensions#ycm#error_symbol = 'E:'
+let g:airline#extensions#ycm#warning_symbol = 'W:'
+
+"===============  solarized  ==============="
+
+let g:solarized_termcolors=256
+let g:solarized_termtrans=1
+let g:solarized_underline=1
+let g:solarized_italic=1
+
+if has('gui_running')
+    set background=light
+else
+    set background=dark
+endif
+
+"============== NERDTreeToggle ============="
+
+map <F2> :NERDTreeToggle <CR>
+"set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
+set laststatus=2
+set t_Co=256
+
+"==============    taglist   ============="
+
+map <F3> :TlistToggle <CR>
+let Tlist_Use_Right_Window=0
+"==============    emmet-vim   ============="
+
+let g:user_emmet_mode='a'
+let g:user_emmet_expandabbr_key = '<C-Y>'
+
+"============   syntastic   ============"  
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+"============   eclim   ============"  
+
+"let g:EclimCompletionMethod = 'omnifunc'
+
+"=========== javacomplete2 ========="
+
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
+
+"=========== multi-visual ========="
+
+let g:VM_maps = {}
+let g:VM_maps["Add Cursor Down"]             = '<M-j>'
+let g:VM_maps["Add Cursor Up"]               = '<M-k>'
+let g:VM_maps["Align"]                       = '<M-a>'
+
+"=========== vim-sql-workbench ========="
+
+"let g:sw_exe='/opt/SQLWorkbench/sqlworkbench.sh'
+
+"=========== vim-markdown ========="
+
+let g:vim_markdown_folding_disabled = 1
+set conceallevel=2
+let g:vim_markdown_math = 1
+nmap <M-t> :vert bel ter<CR>
+
+"=========== vim-markdown ========="
+function! SetupCommandAbbrs(from, to)
+  exec 'cnoreabbrev <expr> '.a:from
+	  \ .' ((getcmdtype() ==# ":" && getcmdline() ==# "'.a:from.'")'
+	  \ .'? ("'.a:to.'") : ("'.a:from.'"))'
+endfunction
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Use C to open coc config
+call SetupCommandAbbrs('C', 'CocConfig')
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+"inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+nmap <silent> <C-c>gd <Plug>(coc-definition)
+nmap <silent> <C-c>gy <Plug>(coc-type-definition)
+nmap <silent> <C-c>gi <Plug>(coc-implementation)
+nmap <silent> <C-c>gr <Plug>(coc-references)
+nmap <silent> <C-c>fi <Plug>(coc-references)
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+command! -nargs=0 Format :call CocAction('format')
+
+" Use `:Fold` to fold current buffer
+command! -nargs=? Fold :call CocAction('fold', <f-args>)
+"========== digestif ============"
+let g:coc_filetype_map = {
+  \ 'tex': 'latext',
+  \ 'plaintex': 'tex',
+  \ }
+"========== ner-font  ============"
+"
+function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
+    exec 'autocmd FileType nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
+    exec 'autocmd FileType nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
+endfunction
+
+call NERDTreeHighlightFile('jade', 'green', 'none', 'green', '#151515')
+call NERDTreeHighlightFile('ini', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('md', 'blue', 'none', '#3366FF', '#151515')
+call NERDTreeHighlightFile('yml', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('config', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('conf', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('json', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('html', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('styl', 'cyan', 'none', 'cyan', '#151515')
+call NERDTreeHighlightFile('css', 'cyan', 'none', 'cyan', '#151515')
+call NERDTreeHighlightFile('coffee', 'Red', 'none', 'red', '#151515')
+call NERDTreeHighlightFile('js', 'Red', 'none', '#ffa500', '#151515')
+call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
+call NERDTreeHighlightFile('ds_store', 'Gray', 'none', '#686868', '#151515')
+call NERDTreeHighlightFile('gitconfig', 'Gray', 'none', '#686868', '#151515')
+call NERDTreeHighlightFile('gitignore', 'Gray', 'none', '#686868', '#151515')
+call NERDTreeHighlightFile('bashrc', 'Gray', 'none', '#686868', '#151515')
+call NERDTreeHighlightFile('bashprofile', 'Gray', 'none', '#686868', '#151515')
+call NERDTreeHighlightFile('.c', '11', 'NONE', 'NONE', 'NONE')
+call NERDTreeHighlightFile('h', '3', 'NONE', 'NONE', 'NONE')
+call NERDTreeHighlightFile('cc', '5', 'NONE', 'NONE', 'NONE')
+call NERDTreeHighlightFile('mm', '4', 'NONE', 'NONE', 'NONE')
