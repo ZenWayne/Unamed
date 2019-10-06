@@ -14,7 +14,7 @@ Plug 'plasticboy/vim-markdown'
 Plug 'shime/vim-livedown'
 Plug 'ryanoasis/vim-devicons'
 
-Plug 'vim-syntastic/syntastic',{'for':['c','java','cpp','php','sh','desktop','css']}
+"Plug 'vim-syntastic/syntastic',{'for':['c','java','cpp','php','sh','desktop','css']}
 Plug 'vim-airline/vim-airline' 
 Plug 'vim-airline/vim-airline-themes' 
 Plug 'altercation/vim-colors-solarized' 
@@ -23,11 +23,11 @@ Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
 "Plug 'Valloric/YouCompleteMe',{'for':'java','do': './install.py --clang-completer --system-libclang --java-completer'}
 "Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','python','php','sh','desktop','css'],'dir': '~/.vim/plugged/YouCompleteMe', 'do': './install.py --clang-completer --system-libclang --java-completer'}
 Plug 'mattn/emmet-vim',{'for':['html','xml']}
-Plug '2072/PHP-Indenting-for-VIm'
+"Plug '2072/PHP-Indenting-for-VIm'
 
-Plug 'rayburgemeestre/phpfolding.vim'
+"Plug 'rayburgemeestre/phpfolding.vim'
 "Plug 'artur-shaik/vim-javacomplete2'
-Plug '~/.vim/plugged/eclim',{'for': ['java']}
+"Plug '~/.vim/plugged/eclim',{'for': ['java']}
 Plug 'aikawa9376/vim-sql-workbench',{'for': ['sql']}
 Plug 'hoffstein/vim-tsql',{'for': ['sql']}
 
@@ -199,6 +199,8 @@ let g:user_emmet_expandabbr_key = '<C-Y>'
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
+let g:syntastic_c_checkers = ['ccls']
+let g:syntastic_cpp_checkers = ['ccls']
 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
@@ -262,10 +264,11 @@ command! -nargs=0 Format :call CocAction('format')
 " Use `:Fold` to fold current buffer
 command! -nargs=? Fold :call CocAction('fold', <f-args>)
 "========== digestif ============"
-let g:coc_filetype_map = {
-  \ 'tex': 'latext',
-  \ 'plaintex': 'tex',
-  \ }
+"let g:tex_flavor = "latex"
+"let g:coc_filetype_map = {
+  "\ 'tex': 'latext',
+  "\ 'plaintex': 'tex',
+  "\ }
 "========== ner-font  ============"
 "
 function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
