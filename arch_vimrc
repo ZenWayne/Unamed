@@ -38,6 +38,8 @@ Plug 'hoffstein/vim-tsql',{'for': ['sql']}
 call plug#end()
 "=================    .Vimrc    =================" 
 set nu
+set hls
+set incsearch
 set showcmd
 syntax enable 
 set fdm=manual
@@ -50,18 +52,20 @@ colorscheme solarized
 filetype indent on
 set ts=8
 set sw=4
+set ss=1
 autocmd Filetype smarty setlocal ft=html
 autocmd Filetype html setlocal ts=2 sw=2 expandtab
 autocmd Filetype markdown setlocal sw=3 expandtab
+autocmd Filetype cpp setlocal ts=4 
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
-autocmd BufNewFile,BufRead *.cpp set formatprg=astyle\ -T4pb
+autocmd BufNewFile,BufRead *.cpp set formatprg=astyle\ -T4p
 autocmd BufNewFile,BufRead *.c set formatprg=astyle\ -s4p
 autocmd BufNewFile,BufRead *.java set formatprg=astyle\ -pA2
 autocmd BufNewFile,BufRead *.py set formatprg=astyle\ -pA12
 "==============    windows    =============="
-"set noea
+set ea
 
 "=================    html    ================="
 let g:html_indent_script1 = "inc"
@@ -196,9 +200,6 @@ let g:user_emmet_expandabbr_key = '<C-Y>'
 
 "============   syntastic   ============"  
 
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
 let g:syntastic_c_checkers = ['ccls']
 let g:syntastic_cpp_checkers = ['ccls']
 
@@ -258,6 +259,10 @@ nmap <silent> <C-c>gy <Plug>(coc-type-definition)
 nmap <silent> <C-c>gi <Plug>(coc-implementation)
 nmap <silent> <C-c>gr <Plug>(coc-references)
 nmap <silent> <C-c>fi <Plug>(coc-references)
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+nmap <leader>qf  <Plug>(coc-fix-current)
+nmap <leader>rn <Plug>(coc-rename)
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 command! -nargs=0 Format :call CocAction('format')
 
