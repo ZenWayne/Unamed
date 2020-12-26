@@ -1,18 +1,20 @@
-
 "=================    Plugin    ================="
 
 call plug#begin('~/.vim/plugged')
 Plug 'junegunn/vim-plug'
-Plug 'mileszs/ack.vim'
+"Plug 'mileszs/ack.vim'
 Plug 'yianwillis/vimcdoc'
 Plug 'scrooloose/nerdtree' 
 Plug 'jiangmiao/auto-pairs'
-Plug 'tpope/vim-fugitive'
+"Plug 'tpope/vim-fugitive'
 Plug 'mg979/vim-visual-multi'
-Plug 'godlygeek/tabular'
+"Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
-Plug 'shime/vim-livedown'
-Plug 'ryanoasis/vim-devicons'
+"Plug 'shime/vim-livedown'
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
+Plug 'posva/vim-vue'
+Plug 'pangloss/vim-javascript', { 'for': [ 'javascript' ]}
+"Plug 'ryanoasis/vim-devicons'
 
 "Plug 'vim-syntastic/syntastic',{'for':['c','java','cpp','php','sh','desktop','css']}
 Plug 'vim-airline/vim-airline' 
@@ -22,14 +24,14 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
 "Plug 'Valloric/YouCompleteMe',{'for':'java','do': './install.py --clang-completer --system-libclang --java-completer'}
 "Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','python','php','sh','desktop','css'],'dir': '~/.vim/plugged/YouCompleteMe', 'do': './install.py --clang-completer --system-libclang --java-completer'}
-Plug 'mattn/emmet-vim',{'for':['html','xml']}
+"Plug 'mattn/emmet-vim',{'for':['html','xml']}
 "Plug '2072/PHP-Indenting-for-VIm'
 
 "Plug 'rayburgemeestre/phpfolding.vim'
 "Plug 'artur-shaik/vim-javacomplete2'
 "Plug '~/.vim/plugged/eclim',{'for': ['java']}
-Plug 'aikawa9376/vim-sql-workbench',{'for': ['sql']}
-Plug 'hoffstein/vim-tsql',{'for': ['sql']}
+"Plug 'aikawa9376/vim-sql-workbench',{'for': ['sql']}
+"Plug 'hoffstein/vim-tsql',{'for': ['sql']}
 
 "Plug 'tpope/vim-surround',{'for':['html']}
 "Plug 'terryma/vim-expand-region' 
@@ -54,18 +56,49 @@ set ts=8
 set sw=4
 set ss=1
 autocmd Filetype smarty setlocal ft=html
-autocmd Filetype html setlocal ts=2 sw=2 expandtab
+autocmd Filetype html setlocal expandtab ts=2 sw=2
+autocmd Filetype vue setlocal expandtab ts=2 sw=2
+autocmd Filetype javascript setlocal expandtab ts=2 sw=2
 autocmd Filetype markdown setlocal sw=3 expandtab
 autocmd Filetype cpp setlocal ts=4 
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
-autocmd BufNewFile,BufRead *.cpp set formatprg=astyle\ -T4p
+function! CppNoNamespaceAndTemplateIndent()
+    let l:cline_num = line('.')
+    let l:cline = getline(l:cline_num)
+    let l:pline_num = prevnonblank(l:cline_num - 1)
+    let l:pline = getline(l:pline_num)
+    while l:pline =~# '\(^\s*{\s*\|^\s*//\|^\s*/\*\|\*/\s*$\)'
+        let l:pline_num = prevnonblank(l:pline_num - 1)
+        let l:pline = getline(l:pline_num)
+    endwhile
+    let l:retv = cindent('.')
+    let l:pindent = indent(l:pline_num)
+    if l:pline =~# '^\s*template\s*\s*$'
+        let l:retv = l:pindent
+    elseif l:pline =~# '\s*typename\s*.*,\s*$'
+        let l:retv = l:pindent
+    elseif l:cline =~# '^\s*>\s*$'
+        let l:retv = l:pindent - &shiftwidth
+    elseif l:pline =~# '\s*typename\s*.*>\s*$'
+        let l:retv = l:pindent - &shiftwidth
+    elseif l:pline =~# '^\s*namespace.*'
+        let l:retv = 0
+    endif
+    return l:retv
+endfunction
+
+if has("autocmd")
+    autocmd BufEnter *.{cc,cxx,cpp,h,hh,hpp,hxx} setlocal indentexpr=CppNoNamespaceAndTemplateIndent()
+endif
+autocmd BufNewFile,BufRead *.cpp set formatprg=astyle\ -T4p cino=N-s,j1,(0,ws,Ws
 autocmd BufNewFile,BufRead *.c set formatprg=astyle\ -s4p
 autocmd BufNewFile,BufRead *.java set formatprg=astyle\ -pA2
 autocmd BufNewFile,BufRead *.py set formatprg=astyle\ -pA12
 "==============    windows    =============="
 set ea
+nmap <M-t> :vert bel ter<CR>
 
 "=================    html    ================="
 let g:html_indent_script1 = "inc"
@@ -116,7 +149,7 @@ elseif &filetype=='css'
 elseif &filetype=='c'
     set cindent
 elseif &filetype=='cpp'
-    set cindent
+    setlocal cindent
 endif
 "=================Plugin Configure================="
 
@@ -126,25 +159,25 @@ let g:ycm_server_python_interpreter='/usr/bin/python3.7'
 let g:ycm_python_binary_path = '/usr/bin/python3.7'
 let g:ycm_global_ycm_extra_conf='~/.vim/plugged/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
 "let g:ycm_semantic_triggers =  {
-  "\   'c': ['->', '.'],
-  "\   'objc': ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
-  "\            're!\[.*\]\s'],
-  "\   'ocaml': ['.', '#'],
-  "\   'cpp,cuda,objcpp': ['->', '.', '::'],
-  "\   'perl': ['->'],
-  "\   'php': ['->', '::'],
-  "\   'cs,d,elixir,go,groovy,java,javascript,julia,perl6,python,scala,typescript,vb': ['.'],
-  "\   'ruby,rust': ['.', '::'],
-  "\   'lua': ['.', ':'],
-  "\   'erlang': [':'],
-  "\   'java' : [ '.', 're!\s{3}'  ],
-  "\ }
+	    "\   'c': ['->', '.'],
+	    "\   'objc': ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+	    "\            're!\[.*\]\s'],
+	    "\   'ocaml': ['.', '#'],
+	    "\   'cpp,cuda,objcpp': ['->', '.', '::'],
+	    "\   'perl': ['->'],
+	    "\   'php': ['->', '::'],
+	    "\   'cs,d,elixir,go,groovy,java,javascript,julia,perl6,python,scala,typescript,vb': ['.'],
+	    "\   'ruby,rust': ['.', '::'],
+	    "\   'lua': ['.', ':'],
+	    "\   'erlang': [':'],
+	    "\   'java' : [ '.', 're!\s{3}'  ],
+	    "\ }
 let g:ycm_semantic_triggers = {
 	    \   'css' : [ 're!^\s{4}', 're!:\s+' ],
-            \   'c' : [ '->', '.','re![#_a-zA-Z]+\w*'  ],
-            \   'python' : [ '.','re![_a-zA-Z]+\w*\s'  ],
-            \   'php' : [ '->', '::','re!\s*[_a-z]{3}'  ],
-            \   'java' : [ '.', 're!\s{3}'  ],
+	    \   'c' : [ '->', '.','re![#_a-zA-Z]+\w*'  ],
+	    \   'python' : [ '.','re![_a-zA-Z]+\w*\s'  ],
+	    \   'php' : [ '->', '::','re!\s*[_a-z]{3}'  ],
+	    \   'java' : [ '.', 're!\s{3}'  ],
 	    \ }
 
 "nnoremap <C-c>gt :YcmCompleter GoTo<CR>
@@ -158,7 +191,7 @@ let g:ycm_semantic_triggers = {
 "===============  airline  ==============="
 
 if !exists('g:airline_symbols')
-let g:airline_symbols = {}
+    let g:airline_symbols = {}
 endif
 let g:airline_powerline_fonts = 1
 let g:airline_symbols.whitespace = 'Ξ'
@@ -229,31 +262,63 @@ let g:VM_maps["Align"]                       = '<M-a>'
 
 "=========== vim-markdown ========="
 
-let g:vim_markdown_folding_disabled = 1
 set conceallevel=2
 let g:vim_markdown_math = 1
-nmap <M-t> :vert bel ter<CR>
+let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_conceal_code_blocks = 1
+"let g:vim_markdown_conceal = 0
 
-"=========== vim-markdown ========="
 function! SetupCommandAbbrs(from, to)
-  exec 'cnoreabbrev <expr> '.a:from
-	  \ .' ((getcmdtype() ==# ":" && getcmdline() ==# "'.a:from.'")'
-	  \ .'? ("'.a:to.'") : ("'.a:from.'"))'
+    exec 'cnoreabbrev <expr> '.a:from
+		\ .' ((getcmdtype() ==# ":" && getcmdline() ==# "'.a:from.'")'
+		\ .'? ("'.a:to.'") : ("'.a:from.'"))'
 endfunction
 
 function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
+    if (index(['vim','help'], &filetype) >= 0)
+	execute 'h '.expand('<cword>')
+    else
+	call CocAction('doHover')
+    endif
 endfunction
+
+"=========== vim-livedown ========="
+
+"nmap gm :LivedownToggle<CR>
+"let g:livedown_browser = "firefox"
+
+"==== markdown-preview.nvim ======="
+
+let g:mkdp_browser = ''
+let g:mkdp_echo_preview_url = 1
+function! g:Open_browser(url)
+    "exec "Start! firefox --no-remote -P default --class markdown " . a:url
+    silent exe "!firefox --no-remote -P default --class markdown " . a:url . "&"
+endfunction
+let g:mkdp_browserfunc = 'g:Open_browser'
+let g:mkdp_preview_options = {
+	    \ 'mkit': {},
+	    \ 'katex': {},
+	    \ 'uml': {},
+	    \ 'maid': {},
+	    \ 'disable_sync_scroll': 0,
+	    \ 'sync_scroll_type': 'middle',
+	    \ 'hide_yaml_meta': 1,
+	    \ 'sequence_diagrams': {},
+	    \ 'flowchart_diagrams': {},
+	    \ 'content_editable': v:false
+	    \ }
+
+let g:mkdp_page_title = '「${name}」'
+
+"=========== coc.nvim ========="
 
 " Use C to open coc config
 call SetupCommandAbbrs('C', 'CocConfig')
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-"inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+autocmd FileType vue inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 nmap <silent> <C-c>gd <Plug>(coc-definition)
 nmap <silent> <C-c>gy <Plug>(coc-type-definition)
 nmap <silent> <C-c>gi <Plug>(coc-implementation)
@@ -263,43 +328,18 @@ nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 nmap <leader>qf  <Plug>(coc-fix-current)
 nmap <leader>rn <Plug>(coc-rename)
+nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
 nnoremap <silent> K :call <SID>show_documentation()<CR>
+autocmd FileType vue inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() :
+	    \"\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 command! -nargs=0 Format :call CocAction('format')
 
 " Use `:Fold` to fold current buffer
 command! -nargs=? Fold :call CocAction('fold', <f-args>)
-"========== digestif ============"
+"========== digestif"
 "let g:tex_flavor = "latex"
 "let g:coc_filetype_map = {
-  "\ 'tex': 'latext',
-  "\ 'plaintex': 'tex',
-  "\ }
-"========== ner-font  ============"
-"
-function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
-    exec 'autocmd FileType nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
-    exec 'autocmd FileType nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
-endfunction
+	    "\ 'tex': 'latext',
+	    "\ 'plaintex': 'tex',
+	    "\ }
 
-call NERDTreeHighlightFile('jade', 'green', 'none', 'green', '#151515')
-call NERDTreeHighlightFile('ini', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('md', 'blue', 'none', '#3366FF', '#151515')
-call NERDTreeHighlightFile('yml', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('config', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('conf', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('json', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('html', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('styl', 'cyan', 'none', 'cyan', '#151515')
-call NERDTreeHighlightFile('css', 'cyan', 'none', 'cyan', '#151515')
-call NERDTreeHighlightFile('coffee', 'Red', 'none', 'red', '#151515')
-call NERDTreeHighlightFile('js', 'Red', 'none', '#ffa500', '#151515')
-call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
-call NERDTreeHighlightFile('ds_store', 'Gray', 'none', '#686868', '#151515')
-call NERDTreeHighlightFile('gitconfig', 'Gray', 'none', '#686868', '#151515')
-call NERDTreeHighlightFile('gitignore', 'Gray', 'none', '#686868', '#151515')
-call NERDTreeHighlightFile('bashrc', 'Gray', 'none', '#686868', '#151515')
-call NERDTreeHighlightFile('bashprofile', 'Gray', 'none', '#686868', '#151515')
-call NERDTreeHighlightFile('.c', '11', 'NONE', 'NONE', 'NONE')
-call NERDTreeHighlightFile('h', '3', 'NONE', 'NONE', 'NONE')
-call NERDTreeHighlightFile('cc', '5', 'NONE', 'NONE', 'NONE')
-call NERDTreeHighlightFile('mm', '4', 'NONE', 'NONE', 'NONE')
