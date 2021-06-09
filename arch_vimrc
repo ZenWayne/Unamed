@@ -1,6 +1,10 @@
 "=================    Plugin    ================="
-
-call plug#begin('~/.vim/plugged')
+if has('win32')
+    let g:plugpath = '~/vimfiles/plugged'
+else
+    let g:plugpath = '~/.vim/plugged'
+endif
+call plug#begin(plugpath)
 Plug 'junegunn/vim-plug'
 "Plug 'mileszs/ack.vim'
 Plug 'yianwillis/vimcdoc'
@@ -64,6 +68,10 @@ autocmd Filetype cpp setlocal ts=4
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
+if has('win32')
+    set t_ut=""
+    set termguicolors
+endif
 function! CppNoNamespaceAndTemplateIndent()
     let l:cline_num = line('.')
     let l:cline = getline(l:cline_num)
@@ -342,4 +350,4 @@ command! -nargs=? Fold :call CocAction('fold', <f-args>)
 	    "\ 'tex': 'latext',
 	    "\ 'plaintex': 'tex',
 	    "\ }
-
+highlight Pmenu ctermbg=gray guibg=gray
