@@ -1,1 +1,5 @@
-/home/wayne/.vim/coc-settings.json
+{
+  "suggest.noselect": false,
+  "suggest.enablePreselect": true,
+  "suggest.selection": "first"
+}
