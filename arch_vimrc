@@ -1,1 +1,374 @@
-/home/wayne/.vimrc
+"=================    Plugin    ================="
+if has('win32')
+    let g:plugpath = '~/vimfiles/plugged'
+else
+    let g:plugpath = '~/.vim/plugged'
+endif
+call plug#begin(plugpath)
+Plug 'junegunn/vim-plug'
+"Plug 'mileszs/ack.vim'
+Plug 'yianwillis/vimcdoc'
+Plug 'scrooloose/nerdtree' 
+Plug 'jiangmiao/auto-pairs'
+"Plug 'tpope/vim-fugitive'
+Plug 'mg979/vim-visual-multi'
+"Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
+"Plug 'shime/vim-livedown'
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
+Plug 'posva/vim-vue'
+Plug 'pangloss/vim-javascript', { 'for': [ 'javascript' ]}
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+"Plug 'ryanoasis/vim-devicons'
+
+"Plug 'vim-syntastic/syntastic',{'for':['c','java','cpp','php','sh','desktop','css']}
+Plug 'vim-airline/vim-airline' 
+Plug 'vim-airline/vim-airline-themes' 
+Plug 'altercation/vim-colors-solarized' 
+
+Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
+Plug 'dart-lang/dart-vim-plugin'
+Plug 'iamcco/coc-flutter'
+Plug 'fannheyward/coc-pyright', { 'for': [ 'python' ]}
+"Plug 'Valloric/YouCompleteMe',{'for':'java','do': './install.py --clang-completer --system-libclang --java-completer'}
+"Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','python','php','sh','desktop','css'],'dir': '~/.vim/plugged/YouCompleteMe', 'do': './install.py --clang-completer --system-libclang --java-completer'}
+"Plug 'mattn/emmet-vim',{'for':['html','xml']}
+"Plug '2072/PHP-Indenting-for-VIm'
+
+"Plug 'rayburgemeestre/phpfolding.vim'
+"Plug 'artur-shaik/vim-javacomplete2'
+"Plug '~/.vim/plugged/eclim',{'for': ['java']}
+"Plug 'aikawa9376/vim-sql-workbench',{'for': ['sql']}
+"Plug 'hoffstein/vim-tsql',{'for': ['sql']}
+
+"Plug 'tpope/vim-surround',{'for':['html']}
+"Plug 'terryma/vim-expand-region' 
+"Plug 'terryma/vim-multiple-cursors' 
+"Plug 'artur-shaik/vim-javacomplete2'
+call plug#end()
+"=================    .Vimrc    =================" 
+set nu
+set hls
+set incsearch
+set showcmd
+syntax enable 
+set fdm=manual
+set helplang=cn
+set history=1000
+set nocompatible
+set completeopt=menu
+set cmdheight=2
+colorscheme solarized 
+filetype indent on
+set ts=8
+set sw=4
+set ss=1
+autocmd Filetype smarty setlocal ft=html
+autocmd Filetype html setlocal expandtab ts=2 sw=2
+autocmd Filetype vue setlocal expandtab ts=2 sw=2
+autocmd Filetype javascript setlocal expandtab ts=2 sw=2
+autocmd Filetype markdown setlocal sw=3 expandtab
+autocmd Filetype cpp setlocal ts=4 
+set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+set termencoding=utf-8
+set encoding=utf-8
+if has('win32')
+    set t_ut=""
+    set termguicolors
+endif
+function! CppNoNamespaceAndTemplateIndent()
+    let l:cline_num = line('.')
+    let l:cline = getline(l:cline_num)
+    let l:pline_num = prevnonblank(l:cline_num - 1)
+    let l:pline = getline(l:pline_num)
+    while l:pline =~# '\(^\s*{\s*\|^\s*//\|^\s*/\*\|\*/\s*$\)'
+        let l:pline_num = prevnonblank(l:pline_num - 1)
+        let l:pline = getline(l:pline_num)
+    endwhile
+    let l:retv = cindent('.')
+    let l:pindent = indent(l:pline_num)
+    if l:pline =~# '^\s*template\s*\s*$'
+        let l:retv = l:pindent
+    elseif l:pline =~# '\s*typename\s*.*,\s*$'
+        let l:retv = l:pindent
+    elseif l:cline =~# '^\s*>\s*$'
+        let l:retv = l:pindent - &shiftwidth
+    elseif l:pline =~# '\s*typename\s*.*>\s*$'
+        let l:retv = l:pindent - &shiftwidth
+    elseif l:pline =~# '^\s*namespace.*'
+        let l:retv = 0
+    endif
+    return l:retv
+endfunction
+
+if has("autocmd")
+    autocmd BufEnter *.{cc,cxx,cpp,h,hh,hpp,hxx} setlocal indentexpr=CppNoNamespaceAndTemplateIndent()
+endif
+autocmd BufNewFile,BufRead *.cpp set formatprg=astyle\ -T4p cino=N-s,j1,(0,ws,Ws
+autocmd BufNewFile,BufRead *.c set formatprg=astyle\ -s4p
+autocmd BufNewFile,BufRead *.java set formatprg=astyle\ -pA2
+autocmd BufNewFile,BufRead *.py set formatprg=astyle\ -pA12
+"==============    windows    =============="
+set ea
+nmap <M-t> :vert bel ter<CR>
+
+"=================    html    ================="
+let g:html_indent_script1 = "inc"
+let g:html_indent_style1 = "inc" 
+let g:html_indent_inctags = "html,address,article,aside,audio,blockquote,canvas,dd,div,dl,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,hr,main,nav,noscript,ol,output,p,pre,section,table,tfoot,ul,video"
+"=================    .Vimrc    ================="
+
+nmap <M-r> :call Compile()<CR>
+map <C-F5> :call OpenglCompile()<CR>
+
+func! Compile()
+    exec ":w" 
+    if &filetype == 'c' 
+	exec '!gcc % -o run_%< -lm'
+    elseif &filetype == 'cpp'
+	exec '!g++ % -o run_%<'
+    elseif &filetype == 'python'
+	exec '!python3 %'
+    elseif &filetype == 'java'
+	exec '!javac % &&java %<'  
+    elseif &filetype == 'sh'
+	exec '!time bash %'
+    elseif &filetype == 'html'
+	exec  '!google-chrome % &'
+    elseif &filetype == 'php'
+	exec '!php %'
+    endif
+endfunc
+func! OpenglCompile()
+    exec "w"
+    exec "!gcc % -o %< -lglfw3 -lGL -lm -ldl  -lXinerama -lXrandr -lXi -lXcursor -lX11 -lXxf86vm -lpthread"
+endfunc
+
+map <F6> :call Debugger()<CR>
+func! Debugger()
+    exec "w"
+    if &filetype =='c'
+	exec '!rm -rf GDB_%< &&gcc -g % -o GDB_%<'
+    elseif &filetype == 'cpp'                 
+	exec '!rm -rf GDB_%< &&g++ -g % -o GDB_%<'
+    endif
+endfunc
+
+if &filetype=='html'
+    set tabstop=2
+elseif &filetype=='css'
+    set tabstop=2
+elseif &filetype=='c'
+    set cindent
+elseif &filetype=='cpp'
+    setlocal cindent
+endif
+"=================Plugin Configure================="
+
+"=================   YCM   ================="
+
+let g:ycm_server_python_interpreter='/usr/bin/python3.7'
+let g:ycm_python_binary_path = '/usr/bin/python3.7'
+let g:ycm_global_ycm_extra_conf='~/.vim/plugged/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
+"let g:ycm_semantic_triggers =  {
+	    "\   'c': ['->', '.'],
+	    "\   'objc': ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+	    "\            're!\[.*\]\s'],
+	    "\   'ocaml': ['.', '#'],
+	    "\   'cpp,cuda,objcpp': ['->', '.', '::'],
+	    "\   'perl': ['->'],
+	    "\   'php': ['->', '::'],
+	    "\   'cs,d,elixir,go,groovy,java,javascript,julia,perl6,python,scala,typescript,vb': ['.'],
+	    "\   'ruby,rust': ['.', '::'],
+	    "\   'lua': ['.', ':'],
+	    "\   'erlang': [':'],
+	    "\   'java' : [ '.', 're!\s{3}'  ],
+	    "\ }
+let g:ycm_semantic_triggers = {
+	    \   'css' : [ 're!^\s{4}', 're!:\s+' ],
+	    \   'c' : [ '->', '.','re![#_a-zA-Z]+\w*'  ],
+	    \   'python' : [ '.','re![_a-zA-Z]+\w*\s'  ],
+	    \   'php' : [ '->', '::','re!\s*[_a-z]{3}'  ],
+	    \   'java' : [ '.', 're!\s{3}'  ],
+	    \ }
+
+"nnoremap <C-c>gt :YcmCompleter GoTo<CR>
+"nnoremap <C-c>gd :YcmCompleter GoToDeclaration<CR>
+"nnoremap <C-c>t :YcmCompleter GetType<CR>
+"nnoremap <C-c>d :YcmCompleter GetDoc<CR>
+"nnoremap <C-c>fi :YcmCompleter FixIt<CR>
+"nnoremap <C-c>im :YcmCompleter OrganizeImports<CR>
+"nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
+
+"===============  airline  ==============="
+
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+let g:airline_powerline_fonts = 1
+let g:airline_symbols.whitespace = 'Ξ'
+let g:airline_symbols.linenr = '¶'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#bufferline#enabled = 1
+let g:airline#extensions#ycm#enabled = 1
+let g:airline#extensions#ycm#error_symbol = 'E:'
+let g:airline#extensions#ycm#warning_symbol = 'W:'
+
+"===============  solarized  ==============="
+
+let g:solarized_termcolors=256
+let g:solarized_termtrans=1
+let g:solarized_underline=1
+let g:solarized_italic=1
+
+if has('gui_running')
+    set background=light
+else
+    set background=dark
+endif
+
+"============== NERDTreeToggle ============="
+
+map <F2> :NERDTreeToggle <CR>
+"set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
+set laststatus=2
+set t_Co=256
+
+"==============    taglist   ============="
+
+map <F3> :TlistToggle <CR>
+let Tlist_Use_Right_Window=0
+"==============    emmet-vim   ============="
+
+let g:user_emmet_mode='a'
+let g:user_emmet_expandabbr_key = '<C-Y>'
+
+"============   syntastic   ============"  
+
+let g:syntastic_c_checkers = ['ccls']
+let g:syntastic_cpp_checkers = ['ccls']
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+"============   eclim   ============"  
+
+"let g:EclimCompletionMethod = 'omnifunc'
+
+"=========== javacomplete2 ========="
+
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
+
+"=========== multi-visual ========="
+
+let g:VM_maps = {}
+let g:VM_maps["Add Cursor Down"]             = '<M-j>'
+let g:VM_maps["Add Cursor Up"]               = '<M-k>'
+let g:VM_maps["Align"]                       = '<M-a>'
+
+"=========== vim-sql-workbench ========="
+
+"let g:sw_exe='/opt/SQLWorkbench/sqlworkbench.sh'
+
+"=========== vim-markdown ========="
+
+set conceallevel=2
+let g:vim_markdown_math = 1
+let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_conceal_code_blocks = 1
+"let g:vim_markdown_conceal = 0
+
+function! SetupCommandAbbrs(from, to)
+    exec 'cnoreabbrev <expr> '.a:from
+		\ .' ((getcmdtype() ==# ":" && getcmdline() ==# "'.a:from.'")'
+		\ .'? ("'.a:to.'") : ("'.a:from.'"))'
+endfunction
+
+function! s:show_documentation()
+    if (index(['vim','help'], &filetype) >= 0)
+	execute 'h '.expand('<cword>')
+    else
+	call CocAction('doHover')
+    endif
+endfunction
+
+"=========== vim-livedown ========="
+
+"nmap gm :LivedownToggle<CR>
+"let g:livedown_browser = "firefox"
+
+"==== markdown-preview.nvim ======="
+
+let g:mkdp_browser = ''
+let g:mkdp_echo_preview_url = 1
+function! g:Open_browser(url)
+    "exec "Start! firefox --no-remote -P default --class markdown " . a:url
+    silent exe "!google-chrome-stable --class markdown " . a:url . "&"
+endfunction
+let g:mkdp_browserfunc = 'g:Open_browser'
+let g:mkdp_preview_options = {
+	    \ 'mkit': {},
+	    \ 'katex': {},
+	    \ 'uml': {},
+	    \ 'maid': {},
+	    \ 'disable_sync_scroll': 0,
+	    \ 'sync_scroll_type': 'middle',
+	    \ 'hide_yaml_meta': 1,
+	    \ 'sequence_diagrams': {},
+	    \ 'flowchart_diagrams': {},
+	    \ 'content_editable': v:false
+	    \ }
+
+let g:mkdp_page_title = '「${name}」'
+
+"=========== coc.nvim ========="
+
+" Use C to open coc config
+call SetupCommandAbbrs('C', 'CocConfig')
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+autocmd FileType vue inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+nmap <silent> <C-c>gd <Plug>(coc-definition)
+nmap <silent> <C-c>gy <Plug>(coc-type-definition)
+nmap <silent> <C-c>gi <Plug>(coc-implementation)
+nmap <silent> <C-c>gr <Plug>(coc-references)
+nmap <silent> <C-c>fi <Plug>(coc-references)
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+nmap <leader>qf  <Plug>(coc-fix-current)
+nmap <leader>rn <Plug>(coc-rename)
+nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+autocmd FileType vue inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() :
+	    \"\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+command! -nargs=0 Format :call CocAction('format')
+
+" Use `:Fold` to fold current buffer
+command! -nargs=? Fold :call CocAction('fold', <f-args>)
+"========== digestif"
+"let g:tex_flavor = "latex"
+"let g:coc_filetype_map = {
+	    "\ 'tex': 'latext',
+	    "\ 'plaintex': 'tex',
+	    "\ }
+highlight Pmenu ctermbg=gray guibg=gray
+
+set clipboard=unnamedplus
+
+"=========== fzf.vim ========="
+" Map Ctrl+f to the :Files command for fuzzy file searching
+nnoremap <silent> <C-f> :Files<CR>
+
+" Map <Leader>f to the :Rg command for searching file contents using ripgrep
+nnoremap <silent> <Leader>f :Rg<CR>
+
+" Map Ctrl+p to the :GFiles command if using a version control system like Git
+nnoremap <silent> <C-p> :GFiles<CR>
+
+
+"=========== nerdtree========="
+nmap <leader>nf :NERDTreeFind<CR>
