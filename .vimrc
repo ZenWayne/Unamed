@@ -359,7 +359,7 @@ command! -nargs=? Fold :call CocAction('fold', <f-args>)
 	    "\ }
 highlight Pmenu ctermbg=gray guibg=gray
 
-set clipboard=unnamedplus
+set clipboard+=unnamedplus
 
 "=========== fzf.vim ========="
 " Map Ctrl+f to the :Files command for fuzzy file searching
