@@ -22,6 +22,7 @@ Plug 'posva/vim-vue'
 Plug 'pangloss/vim-javascript', { 'for': [ 'javascript' ]}
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-fugitive'
 "Plug 'ryanoasis/vim-devicons'
 
 "Plug 'vim-syntastic/syntastic',{'for':['c','java','cpp','php','sh','desktop','css']}
@@ -73,7 +74,9 @@ autocmd Filetype javascript setlocal expandtab ts=2 sw=2
 autocmd Filetype markdown setlocal sw=3 expandtab
 autocmd Filetype cpp setlocal ts=4 
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
-set termencoding=utf-8
+if !has('nvim')
+    set termencoding=utf-8
+endif
 set encoding=utf-8
 if has('win32')
     set t_ut=""
@@ -359,7 +362,7 @@ command! -nargs=? Fold :call CocAction('fold', <f-args>)
 	    "\ }
 highlight Pmenu ctermbg=gray guibg=gray
 
-set clipboard+=unnamedplus
+"set clipboard+=unnamedplus
 
 "=========== fzf.vim ========="
 " Map Ctrl+f to the :Files command for fuzzy file searching
@@ -374,3 +377,39 @@ nnoremap <silent> <C-p> :GFiles<CR>
 
 "=========== nerdtree========="
 nmap <leader>nf :NERDTreeFind<CR>
+
+" --- Vim-Fugitive 基础快捷键 ---
+let mapleader = " " " 如果你还没设置 Leader Key，建议设为空格
+
+" 打开 Git 状态窗口 (这是最常用的，建议设为 gs)
+nnoremap <leader>gs :Git<CR>
+
+" 快速提交 (Commit)
+nnoremap <leader>gc :Git commit<CR>
+
+" 快速推送 (Push)
+nnoremap <leader>gp :Git push<CR>
+
+" 快速拉取 (Pull)
+nnoremap <leader>gl :Git pull<CR>
+
+" 水平/垂直分屏查看 Diff
+nnoremap <leader>gd :Gdiffsplit<CR>
+nnoremap <leader>gv :Gvdiffsplit<CR>
+
+" 查看 Git 日志 (Log)
+nnoremap <leader>gb :Git blame<CR>
+
+" 快速退出 Diff 视图，只保留当前文件 (Only)
+nnoremap <leader>gx :only<CR>
+
+" 彻底关闭 diff 状态（防止高亮残留）
+nnoremap <leader>go :diffoff!<CR>
+
+" 在三路合并时，快速获取左侧(Target)或右侧(Merge)的内容
+" 'h' 代表左边，'l' 代表右边
+nnoremap <leader>gh :diffget //2<CR>
+
+nnoremap <leader>gl :diffget //3<CR>
+
+autocmd FileType fugitive nnoremap <buffer> gx <nop>
