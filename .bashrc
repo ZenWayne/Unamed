@@ -1,6 +1,12 @@
 [[ -f ~/.keys ]] && . ~/.keys
 export PATH="$HOME/.local/bin:$PATH"
 
+# Android SDK（用户目录）
+export ANDROID_HOME="$HOME/android-sdk"
+export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+export PATH="$ANDROID_HOME/platform-tools:$PATH"
+export PATH="$ANDROID_HOME/emulator:$PATH"
+
 setproxy() {
     export http_proxy=http://127.0.0.1:10809
     export https_proxy=http://127.0.0.1:10809

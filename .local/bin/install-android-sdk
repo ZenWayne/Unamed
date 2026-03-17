@@ -1,0 +1,48 @@
+#!/bin/bash
+# install-android-sdk - 手动安装 Android SDK 组件
+
+set -e
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+log() { echo -e "${GREEN}[$(date +%H:%M:%S)] $1${NC}"; }
+warn() { echo -e "${YELLOW}[$(date +%H:%M:%S)] $1${NC}"; }
+error() { echo -e "${RED}[$(date +%H:%M:%S)] $1${NC}"; exit 1; }
+
+# 检查代理
+if [ -z "$http_proxy" ]; then
+    warn "代理未设置，建议先运行: setproxy"
+    read -p "是否继续? (y/n): " CONTINUE
+    [ "$CONTINUE" != "y" ] && exit 0
+fi
+
+export ANDROID_HOME="$HOME/android-sdk"
+mkdir -p "$ANDROID_HOME/system-images/android-34/google_apis/x86_64"
+
+cd /tmp
+
+# 手动下载系统镜像
+log "下载系统镜像..."
+IMAGE_URL="https://dl.google.com/android/repository/sys-img/google_apis/x86_64-34_r09.zip"
+
+if [ -f "x86_64-34_r09.zip" ]; then
+    log "使用已下载的文件"
+else
+    curl -L -o x86_64-34_r09.zip "$IMAGE_URL" --progress-bar || error "下载失败"
+fi
+
+log "解压系统镜像..."
+unzip -q x86_64-34_r09.zip -d "$ANDROID_HOME/system-images/android-34/google_apis/x86_64/"
+
+log "安装其他必要组件..."
+sdkmanager "platform-tools" "emulator" "platforms;android-34"
+
+log "创建 AVD..."
+avdmanager create avd -n pixel_7 -k "system-images;android-34;google_apis;x86_64" -d pixel_7 || \
+avdmanager create avd -n pixel_7 -k "system-images;android-34;google_apis;x86_64"
+
+log "安装完成!"
+log "启动模拟器: start-android-emulator"

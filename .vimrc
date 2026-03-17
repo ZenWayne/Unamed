@@ -34,6 +34,10 @@ Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
 Plug 'dart-lang/dart-vim-plugin'
 Plug 'iamcco/coc-flutter'
 Plug 'fannheyward/coc-pyright', { 'for': [ 'python' ]}
+Plug 'mfussenegger/nvim-dap', { 'for': [ 'python' ]}
+Plug 'mfussenegger/nvim-dap-python', { 'for': [ 'python' ]}
+Plug 'rcarriga/nvim-dap-ui', { 'for': [ 'python' ]}
+Plug 'nvim-neotest/nvim-nio', { 'for': [ 'python' ]}
 "Plug 'Valloric/YouCompleteMe',{'for':'java','do': './install.py --clang-completer --system-libclang --java-completer'}
 "Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','python','php','sh','desktop','css'],'dir': '~/.vim/plugged/YouCompleteMe', 'do': './install.py --clang-completer --system-libclang --java-completer'}
 "Plug 'mattn/emmet-vim',{'for':['html','xml']}
@@ -311,7 +315,7 @@ let g:mkdp_browser = ''
 let g:mkdp_echo_preview_url = 1
 function! g:Open_browser(url)
     "exec "Start! firefox --no-remote -P default --class markdown " . a:url
-    silent exe "!google-chrome-stable --class markdown " . a:url . "&"
+    silent exec "!google-chrome-stable " . a:url . "&"
 endfunction
 let g:mkdp_browserfunc = 'g:Open_browser'
 let g:mkdp_preview_options = {

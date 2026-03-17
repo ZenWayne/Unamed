@@ -1,0 +1,237 @@
+#!/bin/bash
+# start-android-emulator - 启动 Android 模拟器（AVD 模式）
+# 用法: start-android-emulator [AVD名称]
+
+set -e
+
+# 颜色输出
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+log() {
+    echo -e "${GREEN}[$(date +%H:%M:%S)] $1${NC}"
+}
+
+warn() {
+    echo -e "${YELLOW}[$(date +%H:%M:%S)] WARN: $1${NC}"
+}
+
+error() {
+    echo -e "${RED}[$(date +%H:%M:%S)] ERROR: $1${NC}"
+    exit 1
+}
+
+info() {
+    echo -e "${BLUE}[$(date +%H:%M:%S)] INFO: $1${NC}"
+}
+
+# 设置 Android SDK 路径（优先用户目录）
+if [ -d "$HOME/android-sdk" ]; then
+    export ANDROID_HOME="$HOME/android-sdk"
+elif [ -d "$HOME/Android/Sdk" ]; then
+    export ANDROID_HOME="$HOME/Android/Sdk"
+elif [ -d "/opt/android-sdk" ]; then
+    export ANDROID_HOME="/opt/android-sdk"
+else
+    error "未找到 Android SDK，请先安装"
+fi
+
+# 同时设置 ANDROID_SDK_ROOT（emulator 需要）
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
+
+# 设置 AVD 目录（避免 /run/user/1001 只读问题）
+export ANDROID_AVD_HOME="${ANDROID_AVD_HOME:-$HOME/.android/avd}"
+export ANDROID_EMULATOR_HOME="${ANDROID_EMULATOR_HOME:-$HOME/.android}"
+
+# 更新 PATH
+export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
+
+# 查找 emulator
+if command -v emulator &> /dev/null; then
+    EMULATOR_CMD="emulator"
+elif [ -f "$ANDROID_HOME/emulator/emulator" ]; then
+    EMULATOR_CMD="$ANDROID_HOME/emulator/emulator"
+else
+    error "未找到 emulator，请运行: sdkmanager emulator"
+fi
+
+# 获取 AVD 名称
+AVD_NAME="${1:-}"
+
+# 如果没有指定 AVD，列出可用的
+if [ -z "$AVD_NAME" ]; then
+    log "可用的 AVD 列表:"
+    AVAILABLE_AVDS=$($EMULATOR_CMD -list-avds 2>/dev/null || true)
+
+    if [ -z "$AVAILABLE_AVDS" ]; then
+        warn "没有可用的 AVD"
+        echo ""
+        info "创建 AVD 步骤:"
+        echo "  1. 安装系统镜像: sdkmanager 'system-images;android-34;google_apis;x86_64'"
+        echo "  2. 创建 AVD: avdmanager create avd -n pixel_7 -k 'system-images;android-34;google_apis;x86_64' -d pixel_7"
+        echo ""
+        read -p "是否现在创建 AVD? (y/n): " CREATE_AVD
+        if [ "$CREATE_AVD" = "y" ]; then
+            echo ""
+            info "可用系统镜像:"
+            sdkmanager --list | grep system-images | head -5 || true
+            echo ""
+            read -p "输入系统镜像 (如: system-images;android-34;google_apis;x86_64): " IMAGE
+            read -p "输入 AVD 名称 (如: pixel_7): " NEW_AVD_NAME
+            avdmanager create avd -n "$NEW_AVD_NAME" -k "$IMAGE" -d pixel_7
+            AVD_NAME="$NEW_AVD_NAME"
+        else
+            exit 1
+        fi
+    else
+        echo "$AVAILABLE_AVDS"
+        echo ""
+        read -p "请输入要启动的 AVD 名称: " AVD_NAME
+    fi
+fi
+
+# 验证 AVD 是否存在
+if ! $EMULATOR_CMD -list-avds 2>/dev/null | grep -q "^${AVD_NAME}$"; then
+    error "AVD '$AVD_NAME' 不存在"
+fi
+
+# 检查是否有其他模拟器在运行
+if adb devices 2>/dev/null | grep -q "emulator"; then
+    warn "检测到已有模拟器在运行:"
+    adb devices
+    echo ""
+    read -p "是否停止旧模拟器并启动新的? (y/n): " CONTINUE
+    if [ "$CONTINUE" = "y" ]; then
+        log "停止旧模拟器..."
+        adb emu kill 2>/dev/null || true
+        sleep 2
+        # 强制清理残留进程
+        pkill -9 -f "qemu.*pixel_7" 2>/dev/null || true
+        sleep 1
+    else
+        exit 0
+    fi
+fi
+
+# 检查 GPU 支持
+GPU_MODE="host"
+if [ -z "$DISPLAY" ]; then
+    warn "未检测到 DISPLAY，使用软件渲染"
+    GPU_MODE="swiftshader_indirect"
+fi
+
+# 检查 KVM 支持
+ACCEL_OPT=""
+if [ ! -e /dev/kvm ]; then
+    warn "未找到 /dev/kvm，禁用硬件加速"
+    ACCEL_OPT="-no-accel"
+fi
+
+# 启动参数
+log "启动 AVD: $AVD_NAME"
+log "GPU 模式: $GPU_MODE"
+log "SDK 路径: $ANDROID_HOME"
+
+EMULATOR_OPTS=(
+    -avd "$AVD_NAME"
+    -gpu "$GPU_MODE"
+    -memory 4096
+    -cores 4
+    -no-boot-anim
+)
+
+# 添加无加速选项（如果没有 KVM）
+if [ -n "$ACCEL_OPT" ]; then
+    EMULATOR_OPTS+=("$ACCEL_OPT")
+fi
+
+# 禁用 metrics 收集（避免警告）
+EMULATOR_OPTS+=(-no-metrics)
+
+# 如有 GPU 则添加皮肤参数
+if [ "$GPU_MODE" = "host" ]; then
+    EMULATOR_OPTS+=(-skin 1080x2400)
+fi
+
+# 检查是否需要后台运行
+if [ "$1" = "--background" ] || [ "$1" = "-b" ]; then
+    BACKGROUND=1
+    shift
+fi
+
+# 启动模拟器
+log "执行: $EMULATOR_CMD ${EMULATOR_OPTS[*]}"
+
+if [ -n "$BACKGROUND" ]; then
+    # 后台模式（无 GUI，用于 CI/CD）
+    $EMULATOR_CMD "${EMULATOR_OPTS[@]}" -no-window &
+    EMULATOR_PID=$!
+    log "模拟器进程 PID: $EMULATOR_PID"
+else
+    # 前台模式（有 GUI）
+    log "正在启动图形界面..."
+    $EMULATOR_CMD "${EMULATOR_OPTS[@]}"
+    exit 0
+fi
+
+# 等待设备连接
+log "等待设备连接..."
+MAX_WAIT=60
+WAITED=0
+
+while [ $WAITED -lt $MAX_WAIT ]; do
+    if adb devices 2>/dev/null | grep -q "emulator-[0-9]*[[:space:]]*device"; then
+        DEVICE=$(adb devices | grep "emulator" | head -1 | awk '{print $1}')
+        log "设备已连接: $DEVICE"
+        break
+    fi
+    sleep 1
+    WAITED=$((WAITED + 1))
+done
+
+if [ $WAITED -ge $MAX_WAIT ]; then
+    warn "等待设备连接超时"
+fi
+
+# 等待系统启动完成
+log "等待系统启动完成..."
+BOOT_WAIT=0
+while [ $BOOT_WAIT -lt 120 ]; do
+    BOOT_COMPLETED=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || echo "")
+    if [ "$BOOT_COMPLETED" = "1" ]; then
+        log "系统启动完成！"
+        break
+    fi
+    sleep 2
+    BOOT_WAIT=$((BOOT_WAIT + 2))
+    echo -n "."
+done
+echo ""
+
+# 禁用动画加速测试
+adb shell settings put global window_animation_scale 0 2>/dev/null || true
+adb shell settings put global transition_animation_scale 0 2>/dev/null || true
+adb shell settings put global animator_duration_scale 0 2>/dev/null || true
+
+# 显示连接信息
+echo ""
+log "=== Android 模拟器已启动 ==="
+echo ""
+adb devices
+echo ""
+info "常用命令:"
+echo "  adb devices           - 查看设备"
+echo "  adb shell             - 进入 shell"
+echo "  adb logcat            - 查看日志"
+echo "  adb install app.apk   - 安装 APK"
+echo "  adb emu kill          - 停止模拟器"
+echo "  kill $EMULATOR_PID    - 终止进程"
+echo ""
+
+# 显示设备信息
+MODEL=$(adb shell getprop ro.product.model 2>/dev/null | tr -d '\r' || echo "Unknown")
+VERSION=$(adb shell getprop ro.build.version.release 2>/dev/null | tr -d '\r' || echo "Unknown")
+log "设备: $MODEL (Android $VERSION)"

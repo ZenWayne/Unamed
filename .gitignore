@@ -1,9 +1,0 @@
-# IDE/tooling configs
-.config/
-
-# Common ignores
-*.log
-.DS_Store
-*.swp
-*.swo
-*~
