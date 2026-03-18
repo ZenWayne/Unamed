@@ -1,0 +1,9 @@
+# Private environment variables - DO NOT COMMIT THIS FILE
+# Copy this file to ~/.keys and fill in your actual values
+
+# Anthropic API Key for Claude/Kimi
+export ANTHROPIC_API_KEY_VAR="your-api-key-here"
+
+# Add other private keys below
+# export OPENAI_API_KEY="your-openai-key"
+# export GITHUB_TOKEN="your-github-token"
