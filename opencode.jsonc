@@ -1,0 +1,46 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "provider": {
+	"weikefm": {
+	    "npm": "@ai-sdk/openai-compatible",
+	    "name": "Custom Openai Compatible endpoint",
+	    "options": {
+		//read $HOME/.bashrc or $HOME/.zshrc to find the Custom Openai Compatible Endpoint
+		"baseURL": "your-custom-openai-endpoint",
+		"apiKey": "your-custom-apiKey"
+	    },
+	    "models": {
+		"gpt-5": { "name": "gpt-5" },
+		"gpt-5.2": { 
+		    "name": "gpt-5.2", 
+		    "options": {
+			"reasoningSummary": false
+		    }
+		},
+		"gpt-5.4-pro": { "name": "gpt-5.4-pro" },
+		"gpt-5.4": { "name": "gpt-5.4" }
+	    }
+	},
+	"another_alibaba_cn_account": {
+	    "npm": "@ai-sdk/openai-compatible",
+	    "name": "weike bailian",
+	    //read $HOME/.bashrc or $HOME/.zshrc to find the another_alibaba_cn_account Endpoint
+	    "options": {
+		"baseURL": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+		"apiKey": "dashscope_key"
+	    },
+	    "models": {
+		"deepseek-v3.2": {
+		    "name": "deepseek-v3.2"
+		},
+		"qwen3-omni-flash": {
+		    "name": "qwen3-omni-flash"
+		}
+	    }
+	}
+    },
+    "plugin": [
+	"@tarquinen/opencode-dcp@latest",
+	"oh-my-opencode"
+    ]
+}
