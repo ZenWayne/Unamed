@@ -42,3 +42,10 @@ unset_cnflutter(){
 
 export NO_PROXY="localhost,127.0.0.1"
 export no_proxy="localhost,127.0.0.1"
+
+# Unlimited bash history - never truncate
+HISTSIZE=-1
+HISTFILESIZE=-1
+HISTCONTROL=ignoredups:erasedups
+shopt -s histappend
+PROMPT_COMMAND="history -a;$PROMPT_COMMAND"
