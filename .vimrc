@@ -38,6 +38,7 @@ Plug 'mfussenegger/nvim-dap', { 'for': [ 'python' ]}
 Plug 'mfussenegger/nvim-dap-python', { 'for': [ 'python' ]}
 Plug 'rcarriga/nvim-dap-ui', { 'for': [ 'python' ]}
 Plug 'nvim-neotest/nvim-nio', { 'for': [ 'python' ]}
+Plug 'wookayin/semshi', {  'do': ':UpdateRemotePlugins', 'for': [ 'python' ]}
 "Plug 'Valloric/YouCompleteMe',{'for':'java','do': './install.py --clang-completer --system-libclang --java-completer'}
 "Plug 'Valloric/YouCompleteMe',{'for':['c','java','cpp','python','php','sh','desktop','css'],'dir': '~/.vim/plugged/YouCompleteMe', 'do': './install.py --clang-completer --system-libclang --java-completer'}
 "Plug 'mattn/emmet-vim',{'for':['html','xml']}
