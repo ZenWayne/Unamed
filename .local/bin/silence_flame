@@ -4,15 +4,15 @@
 # Generate filename with timestamp
 FILENAME="$HOME/Pictures/silence_flame_$(date +%Y%m%d%H%M%S).png"
 
-# Take screenshot with flameshot (GUI mode for selection)
-flameshot gui -p "$FILENAME"
+# Take fullscreen screenshot with flameshot (no GUI, non-interactive)
+flameshot full -p "$FILENAME"
 
-# Check if screenshot was saved (user might have cancelled)
+# Check if screenshot was saved
 if [ -f "$FILENAME" ]; then
     # Copy absolute path to clipboard using xsel
     echo -n "$FILENAME" | xsel -ib
     notify-send "Screenshot Saved" "Saved to: $FILENAME\nPath copied to clipboard" -i camera-photo
 else
-    notify-send "Screenshot Cancelled" "No screenshot was saved" -i dialog-warning
+    notify-send "Screenshot Failed" "No screenshot was saved" -i dialog-warning
     exit 1
 fi
