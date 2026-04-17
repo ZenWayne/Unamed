@@ -2,7 +2,7 @@
 # silence_flame - Flameshot wrapper that saves to ~/Pictures and copies path to clipboard
 
 # Generate filename with timestamp
-FILENAME="$HOME/Pictures/silence_flame_$(date +%Y%m%d%H%M%S).png"
+FILENAME="$HOME/Pictures/screenshot/silence_flame_$(date +%Y%m%d%H%M%S).png"
 
 # Take fullscreen screenshot with flameshot (no GUI, non-interactive)
 flameshot full -p "$FILENAME"

@@ -55,7 +55,8 @@ Plug 'wookayin/semshi', {  'do': ':UpdateRemotePlugins', 'for': [ 'python' ]}
 "Plug 'terryma/vim-multiple-cursors' 
 "Plug 'artur-shaik/vim-javacomplete2'
 call plug#end()
-"=================    .Vimrc    =================" 
+"=================    .Vimrc    ================="
+let mapleader = " "
 set nu
 set hls
 set incsearch
@@ -176,54 +177,17 @@ elseif &filetype=='cpp'
 endif
 "=================Plugin Configure================="
 
-"=================   YCM   ================="
-
-let g:ycm_server_python_interpreter='/usr/bin/python3.7'
-let g:ycm_python_binary_path = '/usr/bin/python3.7'
-let g:ycm_global_ycm_extra_conf='~/.vim/plugged/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
-"let g:ycm_semantic_triggers =  {
-	    "\   'c': ['->', '.'],
-	    "\   'objc': ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
-	    "\            're!\[.*\]\s'],
-	    "\   'ocaml': ['.', '#'],
-	    "\   'cpp,cuda,objcpp': ['->', '.', '::'],
-	    "\   'perl': ['->'],
-	    "\   'php': ['->', '::'],
-	    "\   'cs,d,elixir,go,groovy,java,javascript,julia,perl6,python,scala,typescript,vb': ['.'],
-	    "\   'ruby,rust': ['.', '::'],
-	    "\   'lua': ['.', ':'],
-	    "\   'erlang': [':'],
-	    "\   'java' : [ '.', 're!\s{3}'  ],
-	    "\ }
-let g:ycm_semantic_triggers = {
-	    \   'css' : [ 're!^\s{4}', 're!:\s+' ],
-	    \   'c' : [ '->', '.','re![#_a-zA-Z]+\w*'  ],
-	    \   'python' : [ '.','re![_a-zA-Z]+\w*\s'  ],
-	    \   'php' : [ '->', '::','re!\s*[_a-z]{3}'  ],
-	    \   'java' : [ '.', 're!\s{3}'  ],
-	    \ }
-
-"nnoremap <C-c>gt :YcmCompleter GoTo<CR>
-"nnoremap <C-c>gd :YcmCompleter GoToDeclaration<CR>
-"nnoremap <C-c>t :YcmCompleter GetType<CR>
-"nnoremap <C-c>d :YcmCompleter GetDoc<CR>
-"nnoremap <C-c>fi :YcmCompleter FixIt<CR>
-"nnoremap <C-c>im :YcmCompleter OrganizeImports<CR>
-"nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
-
 "===============  airline  ==============="
 
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
 endif
-let g:airline_powerline_fonts = 1
+let g:airline_powerline_fonts = 0
 let g:airline_symbols.whitespace = 'Ξ'
 let g:airline_symbols.linenr = '¶'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#bufferline#enabled = 1
-let g:airline#extensions#ycm#enabled = 1
-let g:airline#extensions#ycm#error_symbol = 'E:'
-let g:airline#extensions#ycm#warning_symbol = 'W:'
+let g:airline#extensions#ycm#enabled = 0
 
 "===============  solarized  ==============="
 
@@ -342,11 +306,12 @@ inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 autocmd FileType vue inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-nmap <silent> <C-c>gd <Plug>(coc-definition)
-nmap <silent> <C-c>gy <Plug>(coc-type-definition)
-nmap <silent> <C-c>gi <Plug>(coc-implementation)
-nmap <silent> <C-c>gr <Plug>(coc-references)
-nmap <silent> <C-c>fi <Plug>(coc-references)
+nmap <silent> <leader>gd <Plug>(coc-definition)
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> <leader>gy <Plug>(coc-type-definition)
+nmap <silent> <leader>gi <Plug>(coc-implementation)
+nmap <silent> <leader>gr <Plug>(coc-references)
+nmap <silent> <leader>fi <Plug>(coc-references)
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 nmap <leader>qf  <Plug>(coc-fix-current)
@@ -373,8 +338,15 @@ highlight Pmenu ctermbg=gray guibg=gray
 " Map Ctrl+f to the :Files command for fuzzy file searching
 nnoremap <silent> <C-f> :Files<CR>
 
-" Map <Leader>f to the :Rg command for searching file contents using ripgrep
-nnoremap <silent> <Leader>f :Rg<CR>
+" Custom Rg command that only searches file content (not filename)
+" --delimiter : --nth 4.. means only search from the 4th column (file content)
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+  \   fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
+
+" Map <Leader>f to the custom Rg command for searching file contents
+nnoremap <silent> <Leader>fs :Rg<CR>
 
 " Map Ctrl+p to the :GFiles command if using a version control system like Git
 nnoremap <silent> <C-p> :GFiles<CR>
@@ -384,8 +356,6 @@ nnoremap <silent> <C-p> :GFiles<CR>
 nmap <leader>nf :NERDTreeFind<CR>
 
 " --- Vim-Fugitive 基础快捷键 ---
-let mapleader = " " " 如果你还没设置 Leader Key，建议设为空格
-
 " 打开 Git 状态窗口 (这是最常用的，建议设为 gs)
 nnoremap <leader>gs :Git<CR>
 
@@ -399,7 +369,7 @@ nnoremap <leader>gp :Git push<CR>
 nnoremap <leader>gl :Git pull<CR>
 
 " 水平/垂直分屏查看 Diff
-nnoremap <leader>gd :Gdiffsplit<CR>
+nnoremap <leader>dd :Gdiffsplit<CR>
 nnoremap <leader>gv :Gvdiffsplit<CR>
 
 " 查看 Git 日志 (Log)
@@ -418,3 +388,11 @@ nnoremap <leader>gh :diffget //2<CR>
 nnoremap <leader>gl :diffget //3<CR>
 
 autocmd FileType fugitive nnoremap <buffer> gx <nop>
+
+"=========== Copy Filename ========="
+" Copy current file name (basename) to system clipboard
+nnoremap <leader>fn :let @+ = expand("%:t")<CR>:echo "Copied: " . expand("%:t")<CR>
+" Copy current file full path to system clipboard
+nnoremap <leader>fp :let @+ = expand("%:p")<CR>:echo "Copied: " . expand("%:p")<CR>
+" Copy current file relative path to system clipboard
+nnoremap <leader>fr :let @+ = expand("%")<CR>:echo "Copied: " . expand("%")<CR>

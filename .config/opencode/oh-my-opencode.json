@@ -3,62 +3,65 @@
   "google_auth": false,
   "agents": {
     "sisyphus": {
-      "model": "alibaba-cn/kimi/kimi-k2.5",
+      "model": "kimi-for-coding/k2p5",
       "variant": "max"
     },
     "oracle": {
-      "model": "alibaba-cn/kimi-k2.5",
+      "model": "kimi-for-coding/k2p5",
       "variant": "high"
     },
     "librarian": {
-      "model": "alibaba-cn/qwen3.5-flash"
+      "model": "opencode/go/kimi-k2.5"
     },
     "explore": {
-      "model": "alibaba-cn/qwen3.5-flash"
+      "model": "kimi-for-coding/k2p5"
     },
     "multimodal-looker": {
-      "model": "alibaba-cn/kimi/kimi-k2.5"
+      "model": "opencode/go/kimi-k2.5"
     },
     "prometheus": {
-      "model": "alibaba-cn/kimi/kimi-k2.5",
+      "model": "opencode/go/kimi-k2.5",
       "variant": "max"
     },
     "metis": {
-      "model": "alibaba-cn/kimi/kimi-k2.5",
+      "model": "opencode/go/kimi-k2.5",
       "variant": "max"
     },
     "momus": {
-      "model": "alibaba-cn/deepseek-v3.2",
+      "model": "opencode/go/kimi-k2.5",
       "variant": "max"
     },
     "atlas": {
-      "model": "alibaba-cn/kimi/kimi-k2.5"
+      "model": "kimi-for-coding/k2p5"
+    },
+    "sisyphus-junior": {
+      "model": "opencode/go/kimi-k2.5"
     }
   },
   "categories": {
     "visual-engineering": {
-      "model": "alibaba-cn/kimi/kimi-k2.5",
+      "model": "kimi-for-coding/k2p5",
       "variant": "high"
     },
     "ultrabrain": {
-      "model": "alibaba-cn/kimi/kimi-k2.5",
+      "model": "kimi-for-coding/k2p5",
       "variant": "high"
     },
     "artistry": {
-      "model": "alibaba-cn/kimi-k2.5",
+      "model": "kimi-for-coding/k2p5",
       "variant": "high"
     },
     "quick": {
-      "model": "alibaba-cn/qwen3.5-flash"
+      "model": "openrouter/stepfun/step-3.5-flash:free"
     },
     "unspecified-low": {
-      "model": "alibaba-cn/glm-5"
+      "model": "opencode/go/glm-5"
     },
     "unspecified-high": {
-      "model": "alibaba-cn/kimi-k2.5"
+      "model": "kimi-for-coding/k2p5"
     },
     "writing": {
-      "model": "alibaba-cn/kimi-k2.5"
+      "model": "kimi-for-coding/k2p5"
     }
   },
   "_migrations": [
