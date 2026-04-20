@@ -1,0 +1,14 @@
+#!/bin/bash
+# silence_flame_region - Flameshot wrapper for region capture, saves to ~/Pictures and copies path to clipboard
+
+FILENAME="$HOME/Pictures/screenshot/silence_flame_$(date +%Y%m%d%H%M%S).png"
+
+flameshot gui -p "$FILENAME"
+
+if [ -f "$FILENAME" ]; then
+    echo -n "$FILENAME" | xsel -ib
+    notify-send "Screenshot Saved" "Saved to: $FILENAME\nPath copied to clipboard" -i camera-photo
+else
+    notify-send "Screenshot Failed" "No screenshot was saved" -i dialog-warning
+    exit 1
+fi
